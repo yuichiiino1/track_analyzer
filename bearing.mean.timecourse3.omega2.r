@@ -2,7 +2,7 @@ bearing.mean.timecourse <- function(plates=1:length(plate.track), tracks=1:track
                             initbearspan=180, nangles=8, timebin=1, timerepeats=50, plottimespan=50, plotprevtime=15){
   
   # Contour必要。
-  # ピルエット中最初のTurnA("T1")のあとのオメガターン（TurnA="R"の最初の点）をtime0として、以下時間を追って平均（ベクトル平均）のBearingをプロット。
+  # ピルエット中最初のTurnA("T1")のあとのオメガターン（roundness < roundess.rhresholdの最初の点）をtime0として、以下時間を追って平均（ベクトル平均）のBearingをプロット。
   # T1直後のBearingが一定範囲ごとのピルエットだけ選んでそれぞれ追跡、平均する。
   # トラック範囲tracksを指定したり、ターン回数がminturnsからmaxturnsのピルエットのみ選択できる（デフォールトではすべて）。
   # 
