@@ -1,5 +1,47 @@
+calc.Contour.centroid <- function(){
+  Contour.centroid <<- list()
+  for(plate.i in 1:length(plate.track)){
+    contour.plate <- Contour[[plate.i]]
+    cat("plate", plate.i,"\n")
+    #cdT <- list()
+    #for(plate.i in 1:length(plate.track)){
+    #  cdT[[plate.i]] <- sort(unique(unlist(dT[ plate.track[[plate.i]] ])))
+    #}
+    Contour.centroid.plate <- list()
+    for(time in 1:length(contour.plate)){
+      contour.t <- contour.plate[[time]]
+      centX <- rep(NA, length(contour.t))
+      centY <- rep(NA, length(contour.t))
+      for(worm.i in 1:length(contour.t)){
+        cXY <- get.worm(contour.t[[worm.i]], plate.i)$cXY
+        if(length(cXY)>0){
+          centX[worm.i] <- mean(cXY[,1])
+          centY[worm.i] <- mean(cXY[,2])
+        }
+      }
+      Contour.centroid.t <- list(flag=TRUE, centX=centX, centY=centY) # record
+      Contour.centroid.plate <- c(Contour.centroid.plate, list(Contour.centroid.t)) 
+    }
+    Contour.centroid <<- c(Contour.centroid, list(Contour.centroid.plate))
+  }
+}
+
 calc.Roundness <- function(){
+
   library(EBImage)
+  
+  if(!exists("Contour.centroid")){
+    calc.Contour.centroid()
+  }
+  
+  requirements <- c("point.n","Contour","dX","dY","Contour.centroid")
+  for(obj in requirements){
+  if(!exists(obj)){
+    cat(obj,"is missing\n")
+    return("")
+  }
+  }
+  
   Roundness <<- list()
   Area <<- list()
   cdT <- list()
@@ -47,7 +89,7 @@ calc.Roundness <- function(){
     } # end for(track.i)
     cat("\n")
   } # end for(plate.i)
-  cat("Saving Roundness and Area\n")
+  cat("Saving Roundness and Area to Roundness.RData\n")
   save(Roundness, Area, file="Roundness.RData")
 } # end function
 
@@ -80,3 +122,5 @@ freeman2contour <- function(freeman1, origin.x=0, origin.y=0){
   contoury <- origin.y + cumsum(freemany)
   return(cbind(contourx,contoury))
 }
+
+cat("Usage: calc.Roundness()\n")
