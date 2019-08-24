@@ -1,82 +1,17 @@
 version<-"track_analyzer1.3.r"
 
 
-#190318  contourファイル読み込み追加
-#190318  track_analyzer1.3.r: mags (list of mag for each plate)を加えた。contourの計算のときに必要になるので。
-#190313  track_analyzer1.2.r: Chemotaxis indexを加えた。
-#171118  track_analyzer1b.1.r: gWidgets を使い、GUIで入力できるようにした。
-#151223  wt5.9.13.r: calc.Bearingでplate_format="none"も許されるようにした。
-#140908  wt5.9.12.r: findPirAでThetaも計算するようにした。calc.PirCdCdlやcalc.PirACdCdlなどでグローバルのtotal, count, pirを書き換えないように変更。
-#140906  wt5.9.11.r: Sharp Turnの判定の際などに、連続した3つのタイムポイントのなす角をもとにして計算するコマンドを追加。
-#          findPirAおよびcalc.PirRunA。さらに、グラフ作成のための数値を計算するコマンド、calc.PirCdCdl、calc.TurnCdCdl、
-#          calc.PirACdCdl、calc.TurnACdCdlを追加。これらはファイル出力も行う。ついでにcalc.PirCdCdTにもファイル出力機能を追加。
-#130911-12  wt.5.9.10.r: pirhist関係の一連のコマンドで次元の違う変数が同じ名前になっている等、エラー回避のため多数の修正。
-#            距離別、時間別、 プレート別の次元が追加された変数は名前の末尾にd, t, pをそれぞれ付加。
-#            bearingのコサインに基づく場合には名前の末尾にcを付加。
-#130911  wt5.9.10.r: WVIndexなどの二次元と三次元のバージョンがある変数については名前を区別する。3次元はpをつける。
-#130911  wt5.9.9.r: Markpointsの入力がない場合にread.filesがエラーにならないように修正。
-#130911  wt5.9.8.r: pirhistc5でpoint.i→iのバグ修正。plotTRBcircles、calc.PirIndexのapplyに関するエラー回避。
-#130910  wt5.9.8.r: 変数gradientの扱いがいい加減で、匂いのアッセイではcalc.Bearingでエラーが出るので修正。
-#                   calc.Bearingも不完全な部分を修正。
-#130910  wt5.9.7.r: adjust positionで"2spotnew"を追加。markpointとしての入力データを使えるようにする。
-#130910  wt5.9.6.r: calc.Bearingで一カ所"1point"となっていたエラーを修正。
-#130720  wt5.9.5.r: migbiasを計算するコマンドmigration.biasを追加。
-#130221  wt5.9.4.r: classifyのバグを一カ所修正。
-#130220  wt5.9.3.r: adjust.positionを変更。kunitomoフォーマットでパラメータmark_left_to_rightがTRUEの場合は、markpointが右→左の順の場合、プレートを180°ほど回転させる。
-#130220  wt5.9.3.r: Macでエラーが出ないように全角スペースをすべて半角スペースに変更。
-#121225  wt5.9.2.r: read.filesのdatatype=processedでwtで使われるすべての数値を読み込むようにした。
-#121217  wt5.9.1.1.r: plotxyの描画範囲を指定可とする、calc.speedのバグを修正、
-#120602  wt5.9.0.5.r: calc.PirCdCdTにcountを追加
-#120601  wt5.9.0.4.r: calc.TRdCdLatを追加
-#120601  wt5.9.0.3.r: calc.PirCdCdTを追加
-#120330  wt5.9.0.1.r: classifyを追加
-#120403  wt5.9.0.2.r: findShortTurnを追加
-#110906  wt5.8β6.r: plot.PirCdCdTにlegendオプションを追加
-#110623  wt5.8β5.r: movieplotyxを追加
-#110609  wt5.8β3.r: multiplotxyにsampling機能を追加
-#110603  wt5.8β1.r: plot.PirTCを追加
-#110414  wt5.7β7.r: calc.CIを追加。
-#110413  wt5.7β6.r: simulateのbasal pirouetteがNAのときは自動計算にする。
-#110413  wt5.7β5.r: ピルエット頻度を時間当たりに変更。
-#110413  wt5.7β4.r: plot.TRTdCdLatを作成。
-#110412  wt5.7β1: pirouette.graphの横軸のラベルが間違っていたので修正。
-#110327  wt5.5: TurnRateの計算に一部不適切な処理があった点を修正。
-#        １）前後に十分な距離がとれないときは計算しない。２）前後にとった領域内がすべてRunでないと計算しない。
-#110323  wt5.5β2: simulationで勾配がなくてもエラーにならないようにDThetaを改変。
-#110322  wt5.5β1: clip機能を追加。 
-#110320  wt5.4.r: center-peakフォーマット対応
-#110307  wt5.4β2.r: 0.2mm刻みの濃度シミュレーションデータを使用。
-#110307  wt5.4β1.r: 位置合わせの回転方向が逆だったので修正。
-#110301- wt5.3.r: 濃度依存性の解析を追加
-#110227- wt5.2.r: simulatorを統合。
-#110219- wt4(2010 12 edition).rからwt5.1.rにバージョンアップ。変更点は#4.1と記載
-
-#101211 関数BPirplotc3p(縦軸をPirouetteProbability、横軸をcosBearingの図を描く。)を追加(グラフの各点にエラーバーSDがつくようになっている。)
-#101211 関数plotTRBs type=="plate time"(縦軸をCurvingRate、横軸をcosBearingの図を描く。)を追加(グラフの各点にエラーバーSDがつくようになっている。)
-
-#100122 関数draw.PirIndexを追加(calc.PirIndexを改変したもの)論文のFigに黒色や白色の円の図を載せる際にコントトロールの円を描くためのプログラム。calc.PirIndexとはPirIndexなどが作成されないところが異なる。
-
-#wt3からwt4への変更点
-#100901 before.afterにbearingThetaEnd(pirouetteが終わった後のbearing)を追加した。
-#100901 WVIndexやPirIndexなどすべてをtxt形式からcsv形式で出力されるように改変。
-#100901 Bearing before and after pirouetteは処理に時間がかかるので高濃度忌避行動解析用のスクリプトの最後に出力するようにした。
-
-#090629 analyzer.r: plot.rと統合。
-#090629 readfiles.4: temp10readtable.rから改変。
-#091029 体裁を整えpiranal.rと統合。
-
-
 library(gWidgets)
 options("guiToolkit"="RGtk2")
 workingdir <- getwd()
 datadir <- paste(workingdir, '\\data', sep="")
 
 
-# コマンド表示用の機能。
+# Functions for showing commands.
 # usage: command(func1)
 co <- c()
 va <- c()
-# command関数
+# command
 command<-function(a){
 query <- paste(match.call())[-1]
 if(length(query)==0 || query=="all"){
@@ -101,67 +36,23 @@ else cat(sub("\n","",co[[query]]))
 }
 
 
-# variable　関数
+# variable
 variable<-function(a){
 query <- paste(match.call())[-1]
 cat(sub("\n","",va$all))
-#if(length(query)==0 || query=="list") print(names(va)[names(va)!="all"])
-#else cat(sub("\n","",va[[query]]))
 }
 
-# 以下のようにベクトルcoの名前付き要素を追加する形式で各関数の説明を書いておく。
-# co$func1<-'
-# func1の用法を説明します。
-# 以上の機能があります。。
-# '
-# va$variable1<-'
-# varibale1の内容を説明します。
-# 以上の内容をもちます。
-# '
 
-
-#変数一覧
-va$all<-'
-# <<変数>>
-# workingdir: 作業ディレクトリ（文字列変数）
-# datadir: データディレクトリ（文字列変数）
-# files: データディレクトリ内のファイル名（文字列のベクトル）
-# spot: アトラクタントのスポット位置実データ（データフレーム）
-# track.n : 全トラック数＝リストの長さ（整数値）
-# point.n[track.i]: track.i番目のトラックの観測点数（整数のベクトル）
-# plate.track[[plate]]: 読み込んだplate番目のプレートのトラック番号のベクトル。
-# origfile[track.i]: トラックtrack.iのもとになったファイルの番号
-##### 以下はすべてリスト。例えばdT[[2]][5]は軌跡番号2の最初から5番目の時刻値。####
-# dT: 各観測点の時刻(T)の値(sec)（リスト）
-# dX: 各観測点のX座標(mm)（リスト）
-# dY: 各観測点のY座標(mm)（リスト）
-# dL: 各観測点の距離(mm)（リスト）
-# Theta: 各点間の（瞬間の）進行方向(°)（リスト）
-# AvTheta: ならした進行方向(°)（リスト）
-# TurnRate: 曲進率(°/mm)（リスト）
-# TurnRun: ターンは"T"、ランは"R"（リスト）
-# PirRun: ピルエットは"P"、ランは"R"（リスト）
-# Pirsurround: ピルエットの前後0.8mmを含めピルエットは"P"、残りが"R"（リスト）
-# dC：線虫の位置における塩の濃度（リスト）
-# dCdT：線虫の重心位置における塩の濃度の時間変化（リスト）
-# dCdX：線虫の位置における塩の濃度勾配のX成分（リスト）
-# dCdY：線虫の位置における塩の濃度勾配のY成分（リスト）
-# Cxyt：時刻t, 位置(x,y)における塩の濃度（3次元配列）
-# dCdXxyt：時刻t,位置(x,y)における塩の濃度勾配のX成分（3次元配列）
-# dCdYxyt：時刻t,位置(x,y)における塩の濃度勾配のY成分（3次元配列）
-# dCdLat：線虫の進行方向と垂直な方向の濃度勾配（リスト）
-###########  グローバルパラメーター  ################
-# peak.positionX, peak.positionY：ピーク位置（ベクトル、理論的な座標）
-'
+va$all<-''
 
 ###########################
-#  パラメータ設定
+#  Parameter settings
 ###########################
 
 
 ##############################################################################
 ################                           ###################################
-################    GUI ウィンドウ表示     ###################################
+################    GUI Window display     ###################################
 ################                           ###################################
 ##############################################################################
 
@@ -304,7 +195,7 @@ check.loadcontour <- function(h,...){
 
 workfolderChoose <- function(h,...){
   gfile(text="Select working folder...", type="selectdir", 
-        # , initialfilename = 'E:\\_COMMON HD_MacBookAir3\\WormTracker.part\\国友アッセイ\\kunidata\\s75\\data'
+        # , initialfilename = 'E:\\data'
         action = "setworkfolder",
         handler =
           function(h,...) {
@@ -319,7 +210,7 @@ setworkfolder <- function(f){
 
 datafolderChoose <- function(h,...){
   gfile(text="Select data folder...", type="selectdir", 
-        # , initialfilename = 'E:\\_COMMON HD_MacBookAir3\\WormTracker.part\\国友アッセイ\\kunidata\\s75\\data'
+        # , initialfilename = 'E:\\data'
         action = "setdatafolder",
         handler =
           function(h,...) {
@@ -340,14 +231,14 @@ setdatafolder <- function(f){
 setdf <- function(){
   tempfiles <- list.files(datadir)
   dispose(datafoldercontent)
-  if(length(svalue(subfolder))>0){ # フォルダ形式
+  if(length(svalue(subfolder))>0){
     for(fil in tempfiles){
     #cat(paste0(datadir,fil,"\\","\n"))
       if(file.info(paste0(datadir,fil))$isdir){
         insert(datafoldercontent, fil)
       }
     }
-  }else{ #ベタ置き形式
+  }else{
     for(file.i in which(regexpr("\\.txt$", tempfiles)>0)){
       insert(datafoldercontent, tempfiles[file.i])
     }
@@ -361,15 +252,9 @@ setdf <- function(){
 }
 
 
-# 関数：read.files
+# ：read.files
 co$read.files<-'
-read.files(file.numbers=1:length(files), datatype="multi"/"single"/"processed"): 
-トラックが連記されたファイルを読みこみそのままデータ（dT, dX, dY）とする。
-multi=マルチワームトラッカーの出力ファイル
-single=シングルワームトラッカーのローデータ
-proccessed=シングルワームトラッカーのprocessedデータ
-multiの場合、ヘッダのMarkpointの値を読み込み、
-列名c("x","y")のデータフレームのリストであるmarkpointsとする。
+read.files(file.numbers=1:length(files), datatype="multi"/"single"/"processed")
 '
 read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
 
@@ -379,9 +264,9 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
   }
   tempfiles[tempfiles == ""] <- NULL
   
-  if(length(svalue(subfolder))>0){ # フォルダ形式
+  if(length(svalue(subfolder))>0){
     files <<- tempfiles
-  }else{ # ベタ置き形式
+  }else{
     files <<- c()
     for(fil in tempfiles){
       if(regexpr("\\.txt$", fil)>0){
@@ -421,9 +306,9 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
     {
       cat(file.i,"\n")
       
-      if(length(svalue(subfolder))>0){ #  フォルダ形式
+      if(length(svalue(subfolder))>0){
         pathfilename <- paste0(datadir,files[file.i],"\\",svalue(data.file.name))
-      }else{ # ベタ置き形式
+      }else{
         pathfilename <- paste0(datadir,files[file.i],".txt")
       }
       if(!file.exists(pathfilename)){
@@ -433,9 +318,9 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
       cat("Reading from", pathfilename,"\n")
       d0<<-read.table(pathfilename, header=F, comment.char=c("/"), fill=T, colClasses=c("character","numeric","numeric"))
       
-      #5.1  Markpointsを読みとる
+      #5.1  Read Markpoints
       lines <- readLines(pathfilename, n=10)
-      if(length(grep("Magnification",lines))==0){cat("\nファイルにMagnificationの記載がなく処理不可能です。\n"); return()}
+      if(length(grep("Magnification",lines))==0){cat("\nNo description of Magnification in file and unable to execute.\n"); return()}
       mag<-as.numeric(strsplit(lines[grep("Magnification",lines)],": ")[[1]][2])
       mags <<- c(mags, list(mag))
       if(length(grep("Markpoints",lines))==0){
@@ -450,11 +335,11 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
         markpoints<<-c(markpoints,list(markpoint))
       }
       
-      # データを読み取る
+      # Read data
       names(d0)<<-c("T","X","Y")
-      bound <<- grep(">>",d0$T) # trackの区切り
+      bound <<- grep(">>",d0$T)
       bound <<- c(bound, length(d0$T)+1)
-      for(itrack in 1:(length(bound)-1)) # 各トラックについて：
+      for(itrack in 1:(length(bound)-1))
       {
         track.i <- track.i + 1
         dT <<- c(dT, list(as.numeric(d0$T[(bound[itrack]+1):(bound[itrack+1]-1)])))
@@ -466,17 +351,17 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
       plate.track <<- c(plate.track, list(oldtrack:track.i))
       oldtrack <- track.i + 1
       
-      #######  Coutour file 読み込み  ############
+      #######  Coutour file Read in  ############
       
-      if(length(svalue(loadcontour))!=0){ # coutourファイル読み込みが指定されている場合
+      if(length(svalue(loadcontour))!=0){
       
         # read contour.data file and return contour.plate
         # contour.plate is a list of list(each t) of list(origin.x, origin.y, total, contour)(each worm)
 
-        # サブフォルダ形式
-        if(length(svalue(subfolder))>0){ #  フォルダ形式
+        #
+        if(length(svalue(subfolder))>0){
           contourpathfilename <- paste0(datadir,files[file.i],"\\",svalue(contour.file.name))
-        }else{ # べた置き形式
+        }else{
           contourpathfilename <- paste0(datadir,files[file.i],".data")
         }
         if(!file.exists(contourpathfilename)){
@@ -622,10 +507,10 @@ read.files <- function(h,...){ #file.numbers=1:length(files), datatype){
 
 
 
-#関数routine
+#routine
 co$routine<-'
 routine()
-データ読み込み後に通常行う以下の処理など（basiccommandgroup1/2に記載）を一括で実行する。
+Batch execute
 calc.dL()
 findPir()
 calc.PirRun()
@@ -661,12 +546,7 @@ routine<-function(h,...){
 read.C_window <- function(h,...){
   mainwindow <- gwindow(title="Read diffusion simulation data", width=30)
   maingroup <- ggroup(container=mainwindow, horizontal=F)
-  glabel('Diffusion simulatorの出力をconcdirフォルダから読み込み、
-xytの三次元配列Cxyt, dCdXxyt, dCdYxyt, dCdTxytを作成。
-ファイル名は"time1080z2.txt""time1081z2.txt""time1082z2.txt"など時間進行の
-連番となっている。時間はtimestartから始まりtimestepおきにtime.n+1個のファイルからなる。
-simulator.unit=1のとき1mm単位、1分単位。simulator.unit=0.2のとき0.2mm単位、1分単位。
-t引数は1から始まるので実際の時間と1ずれている。差分は若い方に帰属。',container=maingroup)
+  glabel('Read Diffusion simulator output',container=maingroup)
   gbutton("Select diffusion data file", container=maingroup, handler=CfolderChoose)
   concdirname <<- gedit("", container=maingroup)
   tbl <<- glayout(container=maingroup, spacing=3)
@@ -701,7 +581,7 @@ setCfolder <- function(f){
 }
 
 
-############ Export data ウィンドウ #######################
+############ Export data window #######################
 
 varnames <- list(T="dT",X="dX",Y="dY",V="dV",dL="dL",C="dC",dCdT="dCdT",dCdX="dCdX",dCdY="dCdY",dCdLat="dCdLat",
 Theta="Theta",AvTheta="AvTheta",
@@ -772,7 +652,7 @@ export_data <- function(f){
   cat("Wrote data to ",f,"\n",sep="")
 }
 
-##################### save all data ウィンドウ ###############
+##################### save all data window ###############
 
 save_image_window <- function(h,...){
   gfile(text="Select file to save all data...", type="save", initialfilename="mydata.RData", 
@@ -784,92 +664,55 @@ save_image_window <- function(h,...){
           })
 }
 
-#################### 関数ウィンドウのための関数情報  ###################
+#################### Function information for windows  ###################
 
 function_info <- list(
 
 calc.C=list(
-'calc.C(type="12point"|"plug")
-線虫の位置における塩濃度および塩濃度勾配を計算。
-リストdC,dCdT,dCdX,dCdY,dCdLatを作成。
-12点NaClスポットの場合type="12point"
-拡散シミュレーションデータを用いる場合type="plug"'
+'calc.C(type="12point"|"plug")'
 ,
 c('type','"plug"')
 )
 ,
 
 calc.Bearing=list(
-'calc.Bearing(plate_format, odordirection="closer", suppress.numerical=F)
-Bearingを計算。Thetaも計算。
-グローバルパラメータgradientが"numerical"の場合はsuppress.numerical=Tでない限り、
-濃度勾配の方向に対しての角度をBearingとする。
-plate_format="12point"/"2point"/"kunitomo"/"center-peak"/"1point" スポットしたフォーマット。"none"も許される。
-2pointの場合、odordirection="closer"/"midline" 近い方か中央か。
-1pointの場合、スポット位置の座標はシステムに設定されている(peakX,peakY)をそのまま使う。'
+'calc.Bearing(plate_format, odordirection="closer", suppress.numerical=F)'
 ,
 c('plate_format', '"kunitomo"', 'odordirection','"closer"', 'suppress.numerical','F')
 )
 ,
 
 before.after=list(
-'before.after(tracks=1:track.n, division=12, timewindow=c(0,maxT))
-ピルエット（Piraround）前後のBearingを抽出。
-beforeTheta, afterTheta, deltaTheta, bearingThetaを作成（いずれもベクトル）'
+'before.after(tracks=1:track.n, division=12, timewindow=c(0,maxT))'
 ,
 c('tracks','1:track.n', 'division','12', 'timewindow','c(0,maxT)')
 )
 ,
 
 calc.speed=list(
-'timespan秒ごとに区切って平均の速度を算出（Runの部分のみ）。
-結果をmeanVTとして出力。同時にグラフを描画。
-全平均速度としてworm.speedを出力。
-timespanはmeanVT.timespanとして保存。'
+''
 ,
 c('timespan','100', 'maxtime','maxT')
 )
 ,
 
 classify=list(
-'generic関数
+'generic
 classify<-function(x=dT, y=dV, spacer1=NULL, spacer2=NULL, spacer3=NA, spacer4=NULL,
- xmin=0, xbin=100, xmax=maxT, plate=F, PirRunSelect="", timemin=0, timemax=maxT)
-yに解析したいデータを含む標準形式のリストを渡す。
-xに分類指標のデータを含む標準形式のリストを渡す。
-結果はベクトルのリストとしてylistに返される。
-例えばy=dV, x=dTであれば、一定時間帯ごとに分けた速度データの列を要素とするリストとしてylistが作成される。
-xの値はxminからxmaxの間をxbinごとに区切る。
-PirRunSelect = "R"ならRunの部分のみ、PirRunSelect = "P"ならPirouetteの部分のみ、
-PirRunSelect = ""ならすべてのデータを採用。
-timeminとtimemaxが指定されているときは、その時間範囲だけのデータを採用。
-各分類のデータの数をyn, 平均をymean、標準偏差をystdev。
-plate = Tならプレートごと集計。
-xとyのベクトルの長さが異なる場合のためにスペーサーが設けられている。
-xの各ベクトルの先頭にspacer1、末尾にspacer2、
-yの各ベクトルの先頭にspacer3、末尾にspacer4 を追加してから計算される。
-帰り値(outとする)は(ylist, yn, ymean, ystdev)のリスト。
-out$ylist[[plate.i]][[rank.i]]として参照。'
+ xmin=0, xbin=100, xmax=maxT, plate=F, PirRunSelect="", timemin=0, timemax=maxT)'
 ,
 c('x','dT','y','dV','spacer1','NULL','spacer2','NULL','spacer3','NA','spacer4','NULL','xmin','0','xbin','100','xmax','maxT','plate','F','PirRunSelect','""','timemin','0','timemax','maxT')
 )
 ,
 
 plota=list(
-'plota(track.i,from=1, to=point.n[track.i], text="i", regression=F, xlim=c(), ylim=c(), cex=0, type="p", main="", Pircolor="green", Turncolor="red"):
-track.iのfromからtoポイントまでの点をXY座標で表示。
-text="i"ならポイント番号、"TR"ならTurnRateを各点の横に数字で表示。
-typeはplotのtype。
-regression=Tのときは当てはめ直線を引く。
-必要ならx軸とy軸の値の範囲をxlim, ylimで指定。
-ピルエットが緑、ターンが赤で表示されるが、この色はPircolor, Turncolorの指定により変更可。'
+'plota(track.i,from=1, to=point.n[track.i], text="i", regression=F, xlim=c(), ylim=c(), cex=0, type="p", main="", Pircolor="green", Turncolor="red")'
 ,
 c("track.i","1","from","1", "to","point.n[track.i]", "text","\"i\"", "regression","F", "xlim","c()", "ylim","c()", "cex","0", "type","\"p\"", "main","\"\"", "Pircolor","\"green\"", "Turncolor","\"red\"")
 )
 ,
 plotxysimple=list(
-'plotxysimple(tracks=1:track.n, spanT=c(0,maxT))
-軌跡をxy座標上に表示。表示する軌跡の番号と時間範囲を指定可。'
+'plotxysimple(tracks=1:track.n, spanT=c(0,maxT))'
 ,
 c("tracks","1:track.n","spanT","c(1,maxT)")
 )
@@ -878,12 +721,7 @@ c("tracks","1:track.n","spanT","c(1,maxT)")
 multiplotxy=list(
 'multiplotxy(tracks=1:track.n, division.t=12, duration=NA, nrow=NA, ncol=NA, maxtime=NA,
       type="line"/"density", density.division=40, eachmax=T, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
-             centerx=50, centery=50, radius=42.5, sampling=c(1,1))
-プレート上の軌跡の図を時間を分けて複数プロット。duration, nrow, ncolを指定しないと自動となる。
-type="density"の場合は存在頻度の密度プロットをカラーで描画、
-10cmを何区画に分けるかをdensity.divisionで指定、
-最大の頻度の区画を赤とするが、eachmax=Fとすると全時間の最大値で揃える。
-sampling=c(2,3)は3トラック中2トラックを使うという意味。'
+             centerx=50, centery=50, radius=42.5, sampling=c(1,1))'
 ,
 c('tracks','1:track.n','division.t','12','duration','NA','nrow','NA','ncol','NA','maxtime','NA','type','"line"','density.division','40','eachmax','T','cutoff.radius','NA','suppress.dots','F','xlim','c(5,95)','ylim','c(5,95)','centerx','50','centery','50','radius','42.5','sampling','c(1,1)')
 )
@@ -892,38 +730,28 @@ c('tracks','1:track.n','division.t','12','duration','NA','nrow','NA','ncol','NA'
 movieplotxy=list(
 'movieplotxy(tracks=1:track.n, division.t=12, duration=NA, maxtime=NA,
       type="line"/"density", density.division=40, eachmax=T, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
-             centerx=50, centery=50, radius=42.5, sampling=c(1,1))
-プレート上の軌跡の図を時間を分けて複数プロットし連番tiffでmovieフォルダに保存。durationを指定しないと自動となる。
-type="density"は未対応。
-10cmを何区画に分けるかをdensity.divisionで指定、
-最大の頻度の区画を赤とするが、eachmax=Fとすると全時間の最大値で揃える。
-sampling=c(2,3)は3トラック中2トラックを使うという意味。'
+             centerx=50, centery=50, radius=42.5, sampling=c(1,1))'
 ,
 c('tracks','1:track.n','division.t','12','duration','NA','maxtime','NA','type','"line"','density.division','40','eachmax','T','cutoff.radius','NA','suppress.dots','F','xlim','c(5,95)','ylim','c(5,95)','centerx','50','centery','50','radius','42.5','sampling','c(1,1)')
 )
 ,
 
 plotxy=list(
-'plotxy(tracks=1:track.n, spanT=c(0,maxT), xlim=c(0,100), ylim=c(0,100))
-軌跡をカラー表示。表示する軌跡の番号と時間範囲を指定可。'
+'plotxy(tracks=1:track.n, spanT=c(0,maxT), xlim=c(0,100), ylim=c(0,100))'
 ,
 c('tracks','1:track.n','spanT','c(0,maxT)','xlim','c(0,100)','ylim','c(0,100)')
 )
 ,
 
 plottx=list(
-'plottx(tracks=1:track.n, spanT=c(0,maxT))
-横軸を時間にとってX座標の分布を表示。表示する軌跡の番号と時間範囲を指定可。'
+'plottx(tracks=1:track.n, spanT=c(0,maxT))'
 ,
 c('tracks','1:track.n','spanT','c(0,maxT)')
 )
 ,
 
 plotaroundpir=list(
-'plotaroundpir(tracks=1:track.n, nfigs=1, save=TRUE)
-ピルエット前後の軌跡を表示。figs個の図を順次表示。
-save=TRUEならtiffファイルとして保存。
-使用例 par(mfrow=c(3,4)); par(mai=c(0.3,0.4,0.3,0)); plotaroundpir(7000:7100, 12)'
+'plotaroundpir(tracks=1:track.n, nfigs=1, save=TRUE)'
 ,
 c('tracks','1:track.n','nfigs','1','save','TRUE')
 )
@@ -937,56 +765,42 @@ c('tracks','1:track.n','division','20')
 ,
 
 weathervane.graph=list(
-'weathervane.graph(xfrom=-2.5,xto=2.5,xby=0.5,plates=1:plate.n, ylim=c(-40,40), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA)
-横軸にdCdLat, 縦軸にTurnRateのグラフを描く。対象とする濃度範囲をCfrom,Ctoで時間範囲をTfrom,Ttoで指定。'
+'weathervane.graph(xfrom=-2.5,xto=2.5,xby=0.5,plates=1:plate.n, ylim=c(-40,40), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA)'
 ,
 c('xfrom','-2.5','xto','2.5','xby','0.5','plates','1:plate.n','ylim','c(-40,40)','Cfrom','NA','Cto','NA','Tfrom','NA','Tto','NA')
 )
 ,
 
 pirouette.graph=list(
-'pirouette.graph(xfrom=-0.045,xto=0.045,xby=0.01,plates=1:plate.n, ylim=c(0,0.14), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA, mincount=10)
-横軸にdCdT, 縦軸にピルエット頻度のグラフを描く。対象とする濃度範囲をCfrom,Ctoで指定。
-時間の範囲をTfrom,Ttoで指定。'
+'pirouette.graph(xfrom=-0.045,xto=0.045,xby=0.01,plates=1:plate.n, ylim=c(0,0.14), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA, mincount=10)'
 ,
 c('xfrom','-0.045','xto','0.045','xby','0.01','plates','1:plate.n','ylim','c(0,0.14)','Cfrom','NA','Cto','NA','Tfrom','NA','Tto','NA','mincount','10')
 )
 ,
 
 plotTRB=list(
-'plotTRB(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all"):
-横軸にBearing, 縦軸にTurnRateのグラフを描く。必要に応じ表示する軌跡と時間範囲を指定。
-timewindow=c(開始時刻, 終了時刻)
-type="all"：全データを一度に集計, type="plate"：プレート毎に平均したものの平均と標準偏差'
+'plotTRB(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all")'
 ,
 c('tracks','1:track.n','plates','1:plate.n','division','12','timewindow','c()','type','"all"')
 )
 ,
 
 plotTRAT=list(
-'plotTRAT(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all"):
-横軸にAvTheta(進行方向), 縦軸にTurnRateのグラフを描く。必要に応じ表示する軌跡と時間範囲を指定。
-timewindow=c(開始時刻, 終了時刻)
-type="all"：全データを一度に集計, type="plate"：プレート毎に平均したものの平均と標準偏差。'
+'plotTRAT(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all")'
 ,
 c('tracks','1:track.n','plates','1:plate.n','division','12','timewindow','c()','type','"all"')
 )
 ,
 
 plot.PirdCdT=list(
-'plot.PirdCdT(from=-0.1, to=0.1, by=0.02, Cfrom=NA, Cto=NA, ylim=NA)
-横軸にdCdT、縦軸にピルエット頻度をとったグラフを描く。
-引き数としてdCdTの範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。'
+'plot.PirdCdT(from=-0.1, to=0.1, by=0.02, Cfrom=NA, Cto=NA, ylim=NA)'
 ,
 c('from','-0.1','to','0.1','by','0.02','Cfrom','NA','Cto','NA','ylim','NA')
 )
 ,
 
 plot.TRdCdLat=list(
-'plot.TRdCdLat(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA)
-横軸にdCdLat、縦軸にTurnRateをとったグラフを描く。
-引き数としてdCdLatの範囲と刻みを指定する。'
+'plot.TRdCdLat(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA)'
 ,
 c('from','-3','to','3','by','0.5','Cfrom','NA','Cto','NA','ylim','NA')
 )
@@ -994,26 +808,14 @@ c('from','-3','to','3','by','0.5','Cfrom','NA','Cto','NA','ylim','NA')
 
 plot.PirCdCdT=list(
 'plot.PirCdCdT(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, 
-persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n, legend = TRUE)
-横軸にC、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。TfromとTtoの時間範囲のみ計算。
-引き数としてC（x）およびdCdT（y）の範囲と刻みを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabCdCdT=total/pir/maxprobabを作成。'
+persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n, legend = TRUE)'
 ,
 c('xfrom','30','xto','100','xby','2.5','yfrom','-0.6','yto','0.6','yby','0.025','maxprobab','0.1','cutoff','20','persp','FALSE','Tfrom','0','Tto','maxT','tracks','1:track.n','legend','TRUE')
 )
 ,
 
 plot.PirTdCdT=list(
-'plot.PirTdCdT(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)
-横軸にT、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。
-引き数としてT（x）およびdCdT（y）の範囲と刻みを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabTdCdT=total/pir/maxprobabを作成。'
+'plot.PirTdCdT(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)'
 ,
 c('xfrom','0','xto','NA','xby','NA','yfrom','-0.6','yto','0.6','yby','0.025','maxprobab','0.1','cutoff','20','persp','FALSE')
 )
@@ -1021,60 +823,35 @@ c('xfrom','0','xto','NA','xby','NA','yfrom','-0.6','yto','0.6','yby','0.025','ma
 
 plot.PirTC=list(
 'plot.PirTC(xfrom=0, xto=NA, xby=NA, yfrom=30, yto=100, yby=2.5, dCdTfrom=-0.6, 
-     dCdTto=0.6, maxprobab=0.1, cutoff=20, persp=FALSE, tracks=1:track.n)
-定められたdCdTの範囲について横軸にT、縦軸にCをとり、ピルエット頻度をカラー表示したグラフを描く。
-引き数としてT（x）およびC（y）の範囲と刻み、dCdTの範囲dCdTfrom-dCdTtoを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabTC=total/pir/maxprobabを作成。'
+     dCdTto=0.6, maxprobab=0.1, cutoff=20, persp=FALSE, tracks=1:track.n)'
 ,
 c('xfrom','0','xto','NA','xby','NA','yfrom','30','yto','100','yby','2.5','dCdTfrom','-0.6','dCdTto','0.6','maxprobab','0.1','cutoff','20','persp','FALSE','tracks','1:track.n')
 )
 ,
 
 plot.TRdCdLat=list(
-'plot.TRdCdLat(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA)
-横軸にdCdLat、縦軸にTurnRateをとったグラフを描く。
-引き数としてdCdLatの範囲と刻みを指定する。'
+'plot.TRdCdLat(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA)'
 ,
 c('from','-3','to','3','by','0.5','Cfrom','NA','Cto','NA','ylim','NA')
 )
 ,
 
 plot.TRCdCdLat=list(
-'plot.TRCdCdLat(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, tracks=1:track.n, legend=TRUE, legend = "Y")
-横軸にC、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。時間範囲Tfrom～Ttoのみのデータを使用。
-引き数としてC（x）およびdCdLat（y）の範囲と刻みを指定する。
-Turning Rate minTR～maxTRの範囲をカラーコードする。
-区画のタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-結果のデータとしてTRCdCdLを出力する。TRCdCdL.xfrom, TRCdCdL.xto, TRCdCdL.xby, TRCdCdL.mean等が付随。'
+'plot.TRCdCdLat(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, tracks=1:track.n, legend=TRUE, legend = "Y")'
 ,
 c('xfrom','30','xto','100','xby','2.5','yfrom','-3','yto','3','yby','0.2','minTR','-20','maxTR','20','cutoff','5','Tfrom','0','Tto','maxT','tracks','1:track.n','legend','TRUE')
 )
 ,
 
 plot.TRTdCdLat=list(
-'plot.TRTdCdLat(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)
-横軸にT、縦軸にdCdLatをとり、Curving Rateをカラー表示したグラフを描く。
-引き数としてT（x）およびdCdLat（y）の範囲と刻みを指定する。
-Curving rate minTR～maxTRの範囲をカラーコードする。
-区画の中でのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-各区画に分けた行列としてturncount=Runのタイムポイントの総数、TRTdCdL=平均Curving Rateを作成。'
+'plot.TRTdCdLat(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)'
 ,
 c('xfrom','0','xto','NA','xby','NA','yfrom','-3','yto','3','yby','0.2','minTR','-20','maxTR','20','cutoff','5','Tfrom','0','Tto','maxT','tracks','1:track.n','persp','FALSE')
 )
 ,
 
 chemotaxis.index=list(
-'chemotaxis.index(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1:plate.n, left.low=T)
-tpointsで指定された時刻（デフォールトでは2分ごと）の前後（または前または後）1分間における
-各プレートのchemotaxis indexを計算し、グラフにする。
-指定された番号のプレートのデータを使用（デフォールトは全プレート）。
-プレートの向かって左側が塩濃度が低いときはleft.low=TRUE（デフォールト）。逆ならFALSEにする。
-CIの時間経過のグラフをchemotaxis.index.tiffに出力され、
-数値データは各タイムポイントのworm_counts_tx.csv"に虫の分布の数値が、
-chemotaxis.index.csvにChemotaxis indexの数値が出力される。'
+'chemotaxis.index(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1:plate.n, left.low=T)'
 ,
 c('tpoints','seq(0,round(maxT/60)*60,by=120)', 'plates','1:plate.n', 'left.low','TRUE')
 )
@@ -1083,7 +860,7 @@ c('tpoints','seq(0,round(maxT/60)*60,by=120)', 'plates','1:plate.n', 'left.low',
 
 
 ###########################################################
-#####################  関数ウィンドウ  ####################
+#####################  Window  ####################
 
 function_window <- function(h,...){
   mainwindow <- gwindow(title=h$action, width=30)
@@ -1105,7 +882,7 @@ function_window <- function(h,...){
 }
 
 
-##########################  メインウィンドウ表示および実行    ######################
+##########################  Main window display and execution    ######################
 
 refresh<-function(h,...){
   read.tbl()
@@ -1180,45 +957,24 @@ mark_left_to_right <- svalue(tbl[16,2]) # TRUE
 
 
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-###☆☆☆☆☆☆☆                              ☆☆☆☆
-co$o<-'\n☆☆☆☆     ファイル読み込み関係     ☆☆☆☆
-'##☆☆☆☆☆☆☆                              ☆☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+#######################################################
+#################                              ########
+co$o<-'\n########     File inputs reated     ########
+'################                              ########
+#######################################################
 
-# 関数：setdir(datadir)
-#co$setdir<-'
-#setdir(datadir)
-#データディレクトリのデフォールトはworkingdir="./data/"であるが、
-#それ例外のディレクトリをセットする場合に使う。
-#'
-
-#setdir <- function(workingdir){
-#datadir <<- workingdir
-#files <<- list.files(datadir)
-#}
-
-
-#関数read.spots
+#read.spots
 co$read.spots<-'
 read.spots(filename)
-アトラクタントをスポットした座標のファイルを読み込む。
-読み込んだデータはデータフレームspotに格納される。
 '
 read.spots <- function(filename){
   spot<<-read.table(paste("./",filename,sep=""), sep="\t", header=F, fill=T, colClasses=c("character","numeric","numeric","numeric","numeric"))
   names(spot)<<-c("file","X1","Y1","X2","Y2")
 }
 
-#関数read.C
+#read.C
 co$read.C<-'
 read.C(concdir="conc", z=9, timestart=12960, timestep=12, time.n=60, simulator.unit=0.2)
-Diffusion simulatorの出力をconcdirフォルダから読み込み、
-xytの三次元配列Cxyt, dCdXxyt, dCdYxyt, dCdTxytを作成。
-ファイル名は"time1080z2.txt""time1081z2.txt""time1082z2.txt"など時間進行の
-連番となっている。時間はtimestartから始まりtimestepおきにtime.n+1個のファイルからなる。
-simulator.unit=1のとき1mm単位、1分単位。simulator.unit=0.2のとき0.2mm単位、1分単位。
-t引数は1から始まるので実際の時間と1ずれている。差分は若い方に帰属。
 '
 read.C<-function(concdir="conc", z=9, timestart=12960, timestep=12, time.n=60, simulator.unit=0.2){
   cat("reading data...\n")
@@ -1239,23 +995,17 @@ read.C<-function(concdir="conc", z=9, timestart=12960, timestep=12, time.n=60, s
   focus(readCmessage)
 }
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-###☆☆☆☆☆☆☆                           ☆☆☆☆☆
-co$oo<-'\n☆☆☆☆     基本プロット関数     ☆☆☆☆
-'##☆☆☆☆☆☆☆                           ☆☆☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+#######################################################
+#################                           ##########
+co$oo<-'\n########     Basic plots     ########
+'################                           ##########
+#######################################################
 
 
 
-#関数plota
+#plota
 co$plota<-'
-plota(track.i,from=1, to=point.n[track.i], text="i", regression=F, xlim=c(), ylim=c(), cex=0, type="p", main="", Pircolor="green", Turncolor="red"):
-track.iのfromからtoポイントまでの点をXY座標で表示。
-text="i"ならポイント番号、"TR"ならTurnRateを各点の横に数字で表示。
-typeはplotのtype。
-regression=Tのときは当てはめ直線を引く。
-必要ならx軸とy軸の値の範囲をxlim, ylimで指定。
-ピルエットが緑、ターンが赤で表示されるが、この色はPircolor, Turncolorの指定により変更可。
+plota(track.i,from=1, to=point.n[track.i], text="i", regression=F, xlim=c(), ylim=c(), cex=0, type="p", main="", Pircolor="green", Turncolor="red")
 '
 plota <- function(track.i,from=1, to=point.n[track.i], text="i", regression=F, xlim=c(), ylim=c(), cex=0, type="p", main="", Pircolor="green", Turncolor="red",tbl=NULL){
   if(!is.null(tbl)){
@@ -1292,10 +1042,9 @@ plota <- function(track.i,from=1, to=point.n[track.i], text="i", regression=F, x
   lines(c(meanX-span2,meanX+span2),c(meanY-span2*tan(theta/180*pi),meanY+span2*tan(theta/180*pi)))
   }
 }
-#関数plotxysimple
+#plotxysimple
 co$plotxysimple<-'
 plotxysimple(tracks=1:track.n, spanT=c(0,maxT))
-軌跡をxy座標上に表示。表示する軌跡の番号と時間範囲を指定可。
 '
 plotxysimple <- function(tracks=1:track.n, spanT=c(0,maxT), tbl=NULL){
   if(!is.null(tbl)){
@@ -1316,11 +1065,6 @@ co$multiplotxy<-'
 multiplotxy(tracks=1:track.n, division.t=12, duration=NA, nrow=NA, ncol=NA, maxtime=NA,
       type="line"/"density", density.division=40, eachmax=T, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
              centerx=50, centery=50, radius=42.5, sampling=c(1,1))
-プレート上の軌跡の図を時間を分けて複数プロット。duration, nrow, ncolを指定しないと自動となる。
-type="density"の場合は存在頻度の密度プロットをカラーで描画、
-10cmを何区画に分けるかをdensity.divisionで指定、
-最大の頻度の区画を赤とするが、eachmax=Fとすると全時間の最大値で揃える。
-sampling=c(2,3)は3トラック中2トラックを使うという意味。
 '
 multiplotxy<-function(tracks=1:track.n, division.t=12, duration=NA, nrow=NA, ncol=NA, maxtime=NA, 
              type="line", density.division=40, eachmax=T, cutoff.radius=NA, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
@@ -1419,11 +1163,6 @@ co$movieplotxy<-'
 movieplotxy(tracks=1:track.n, division.t=12, duration=NA, maxtime=NA,
       type="line"/"density", density.division=40, eachmax=T, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
              centerx=50, centery=50, radius=42.5, sampling=c(1,1))
-プレート上の軌跡の図を時間を分けて複数プロットし連番tiffでmovieフォルダに保存。durationを指定しないと自動となる。
-type="density"は未対応。
-10cmを何区画に分けるかをdensity.divisionで指定、
-最大の頻度の区画を赤とするが、eachmax=Fとすると全時間の最大値で揃える。
-sampling=c(2,3)は3トラック中2トラックを使うという意味。
 '
 movieplotxy<-function(tracks=1:track.n, division.t=12, duration=NA, maxtime=NA, 
              type="line", density.division=40, eachmax=T, cutoff.radius=NA, suppress.dots=F, xlim=c(5,95), ylim=c(5,95),
@@ -1512,10 +1251,9 @@ movieplotxy<-function(tracks=1:track.n, division.t=12, duration=NA, maxtime=NA,
   par(mfrow=c(1,1),mar=c(5,5,2,2))
 }
 
-#関数plotxy
+#plotxy
 co$plotxy<-'
 plotxy(tracks=1:track.n, spanT=c(0,maxT), xlim=c(0,100), ylim=c(0,100))
-軌跡をカラー表示。表示する軌跡の番号と時間範囲を指定可。
 '
 plotxy <- function(tracks=1:track.n, spanT=c(0,maxT), xlim=c(0,100), ylim=c(0,100), tbl=NULL){
   if(!is.null(tbl)){
@@ -1535,10 +1273,9 @@ plotxy <- function(tracks=1:track.n, spanT=c(0,maxT), xlim=c(0,100), ylim=c(0,10
   }
 }
 
-#関数plottx
+#plottx
 co$plottx<-'
 plottx(tracks=1:track.n, spanT=c(0,maxT))
-横軸を時間にとってX座標の分布を表示。表示する軌跡の番号と時間範囲を指定可。
 '
 plottx <- function(tracks=1:track.n, spanT=c(0,maxT), tbl=NULL){
   if(!is.null(tbl)){
@@ -1553,12 +1290,9 @@ plottx <- function(tracks=1:track.n, spanT=c(0,maxT), tbl=NULL){
     }
 }
 
-#関数plotaroundpir
+#plotaroundpir
 co$plotaroundpir<-'
 plotaroundpir(tracks=1:track.n, nfigs=1, save=TRUE)
-ピルエット前後の軌跡を表示。figs個の図を順次表示。
-save=TRUEならtiffファイルとして保存。
-使用例 par(mfrow=c(3,4)); par(mai=c(0.3,0.4,0.3,0)); plotaroundpir(7000:7100, 12)
 '
 plotaroundpir <- function(tracks=1:track.n, nfigs=1, save=TRUE, tbl=NULL){
   if(!is.null(tbl)){
@@ -1571,8 +1305,8 @@ plotaroundpir <- function(tracks=1:track.n, nfigs=1, save=TRUE, tbl=NULL){
     n <- point.n[track.i]
     R <- (PirRun[[track.i]] == "R")
     P <- (PirRun[[track.i]] == "P")
-    start <- which(R & c(P[2:n],F)) #ピルエット開始点ひとつ前の添え字の列
-    end <- which(R & c(F,P[1:(n-1)])) #ピルエット終了点のひとつ後の添え字の列
+    start <- which(R & c(P[2:n],F))
+    end <- which(R & c(F,P[1:(n-1)]))
     if(length(end)>0 && length(start)>0){
     if(end[1]<=start[1]) end <- end[-1]
     if(length(end)>0)
@@ -1611,63 +1345,45 @@ plotxyhist<-function(tracks=1:track.n, division=20, tbl=NULL){
   xlim=c(0,100), ylim=c(0,100), xlab="X", ylab="Y",zlab="fraction")
 }
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-###☆☆☆☆☆☆☆☆                            ☆☆☆☆
-co$ooo<-'\n☆☆☆☆     データプロセシング     ☆☆☆☆
-'##☆☆☆☆☆☆☆☆                            ☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+#######################################################
+###################                            ########
+co$ooo<-'\n########     Data processing     ########
+'##################                            ######
+#######################################################
 
-####### 内部関数 #######
+####### Internal functions #######
 
-#距離の算出（距離の２乗）
+#Detemine distance
 dist2 <- function(X1,Y1,X2,Y2){
   return((X1-X2)*(X1-X2)+(Y1-Y2)*(Y1-Y2))
 }
 
-#角度の算出（(X,Y)を頂点とした(X1,Y1)と(X2,Y2)への辺のなす各のコサイン。内積／二辺の長さの積）
+#Calculate angle
 costheta <- function(X,Y,X1,Y1,X2,Y2){
   a1 <- c(X1-X, Y1-Y)
   a2 <- c(X2-X, Y2-Y)
-	#if(sum(a1*a1)==0 || sum(a2*a2)==0) 0ならNAが戻る？
   return(sum(a1*a2)/sqrt(sum(a1*a1))/sqrt(sum(a2*a2)))
 }
 
-#角度の算出（(X,Y)を頂点とした(X1,Y1)と(X2,Y2)へのベクトルについて、c(内積, 外積)）
+#Calculation of angle
 product <- function(X,Y,X1,Y1,X2,Y2){
   return(c( ((X1-X)*(X2-X)+(Y1-Y)*(Y2-Y)), abs((X1-X)*(Y2-Y)-(X2-X)*(Y1-Y))) )
 }
 
-####### 座標変換 #######
+####### Coordinate transformation #######
 
-#関数adjust.position
+#adjust.position
 co$adjust.position<-'
 adjust.position()
-基準となる点をもとにプレートの位置合わせをする。
-plate_format="2spot"の場合、匂いの二点スポット。
-中心の座標は(50,50)、匂いはx=19.46の位置にy=50を対称に
-二点スポットされているようにdX, dYを座標変換する。
-基準点の位置はread.spotsによりファイルから読みこんでspotにセットされている。
-plate_format="2odornew"は匂いの二点スポットで"2spot"と同じ。
-ただし、スポットした位置はMarkpointとして入力されている。匂いの間隔は25mmとしている。
-plate_format="kunitomo"の場合、塩プラグを使った國友フォーマット。
-プラグは(20,50)と(80,50)に置かれている。
-この位置はマルチワームトラッカーデータのMarkpointとして入力される。
-plate_format="center-peak"の場合、中心だけで位置合わせをする。
-この位置はマルチワームトラッカーデータのMarkpointとして入力される。
-複数入力されている場合は平均の位置を採用する。
-座標変換のパラメータをTransformとする。
-Transform[[plate.i]] = list(mag, XY0, A, b)
-(Xnew, Ynew) = A */* (X-X0, Y-Y0) + b,  X=mag*x, Y=mag*y
-Aは2×2行列、( )は縦ベクトル。XY0=(X0,Y0), x, yはピクセル単位の座標。
 '
 adjust.position<-function(){
   
-  # Transformを計算
+  # Calculate Transform
   
   Transform <<- list()
   for(plate.i in 1:plate.n){
     if(plate_format=="2spot"){
-      if(!exists("spot")){cat("まずread.spotsを実行して下さい。\n");return}
+      if(!exists("spot")){cat("Execute read.spots first.\n");return}
       X1 <- spot$X1[plate.i]; Y1 <- spot$Y1[plate.i] # odor spots
       X2 <- spot$X2[plate.i]; Y2 <- spot$Y2[plate.i] # odor spots
       XY0 <- c((X1+X2)/2, (Y1+Y2)/2)
@@ -1677,8 +1393,8 @@ adjust.position<-function(){
       A <- matrix(c(ct,-st,st,ct),2,2)
       b <- c(19.46,50)
     }else if(plate_format=="2odornew"){
-      if(!exists("markpoints")){cat("Markpointsが正しく読み込まれていません。\n");return}
-      if(length(markpoints[[plate.i]])!=2){cat("Markpointsの数が正しくありません。\n");return}
+      if(!exists("markpoints")){cat("No Markpoints properly read.\n");return}
+      if(length(markpoints[[plate.i]])!=2){cat("Number of Markpoints is wrong\n");return}
       X1 <- markpoints[[plate.i]][1,1]; Y1 <- markpoints[[plate.i]][1,2] # spot position
       X2 <- markpoints[[plate.i]][2,1]; Y2 <- markpoints[[plate.i]][2,2] # spot position
       XY0 <- c((X1+X2)/2, (Y1+Y2)/2)
@@ -1688,7 +1404,7 @@ adjust.position<-function(){
       A <- matrix(c(ct,-st,st,ct),2,2)
       b <- c(19.46,50)
     }else if(plate_format=="kunitomo"){
-      if(!exists("markpoints")){cat("Markpointsが正しく読み込まれていません。\n");return}
+      if(!exists("markpoints")){cat("No Markpoints properly read.\n");return}
       if(length(markpoints[[plate.i]])!=2){cat("Markpointsの数が正しくありません。\n");return}
       X1 <- markpoints[[plate.i]][1,1]; Y1 <- markpoints[[plate.i]][1,2] # left plug position
       X2 <- markpoints[[plate.i]][2,1]; Y2 <- markpoints[[plate.i]][2,2] # right position
@@ -1703,12 +1419,12 @@ adjust.position<-function(){
         ct <- sqrt(1/(1+tt^2)) #cosine theta
         st <- ct*tt #sine theta
       }
-      A <- matrix(c(ct,st,-st,ct),2,2)  #5.4β1：プラスマイナス逆だった
+      A <- matrix(c(ct,st,-st,ct),2,2)  #5.4beta1
       b <- c(50,50)
     }else if(plate_format=="center-peak"){
-      if(!exists("markpoints")){cat("Markpointsが正しく読み込まれていません。\n");return}
-      if(is.na(markpoints[[plate.i]][1,1]) || is.na(markpoints[[plate.i]][1,2])){cat("Markpointsがありません。\n");return}
-      XY0 <- c(mean(markpoints[[plate.i]][,1]), mean(markpoints[[plate.i]][,2])) # 平均の値を中心(50,50)とする
+      if(!exists("markpoints")){cat("No Markpoints properly read.\n");return}
+      if(is.na(markpoints[[plate.i]][1,1]) || is.na(markpoints[[plate.i]][1,2])){cat("No Markpoints found\n");return}
+      XY0 <- c(mean(markpoints[[plate.i]][,1]), mean(markpoints[[plate.i]][,2]))
       A <- diag(2)
       b <- c(50,50)
     }else{
@@ -1721,7 +1437,7 @@ adjust.position<-function(){
     
   } # end for(plate.i)
   
-  # 実際に座標変換を施す
+  # Coordinate transform
   
   for(plate.i in 1:plate.n){
   for(track.i in plate.track[[plate.i]]){
@@ -1735,13 +1451,11 @@ adjust.position<-function(){
 
 }
 
-####### データ処理 #######
+####### Data processing #######
 
-#関数calc.dL
+#calc.dL
 co$calc.dL<-'
 calc.dL(calc.dV=TRUE)
-各点間の距離計算（dX, dYからdLを計算）
-calc.dV=TRUE（規定値）のときはdV（点間速度）も計算。
 '
 calc.dL <- function(calc.dV=TRUE){
   dL <<- list()
@@ -1755,14 +1469,12 @@ calc.dL <- function(calc.dV=TRUE){
 }
 
 ##################################
-# ターン、ピルエットのマーク
+# Lable Pirouettes and Turns
 ##################################
 
-#関数findPir
+#findPir
 co$findPir<-'
 findPir(from=1, to=track.n)
-シャープターンを同定。時間がかかる。
-TurnRun, AvThetaを算出。
 '
 findPir <- function(from=1, to=track.n){
   cat(paste("Total tracks ", track.n, "\nProcessing track no:\n"))
@@ -1772,7 +1484,7 @@ findPir <- function(from=1, to=track.n){
   }
   else{
     if(length(TurnRun) != from-1 || length(AvTheta) != from-1){
-      cat("fromの値が不適当です。")
+      cat("Illegal value of from")
       return
     }
   }
@@ -1786,7 +1498,7 @@ findPir <- function(from=1, to=track.n){
     flag2 <- FALSE
     cumL <- 0
     for(j11 in (j-1):1){
-      cumL <- cumL + dL[[track.i]][j11] #高速化のためまずは積算距離で計算し次に直線距離を計算。
+      cumL <- cumL + dL[[track.i]][j11]
       if(cumL > gauge) break
     }
     for(j1 in j11:1){
@@ -1813,32 +1525,31 @@ findPir <- function(from=1, to=track.n){
       }
 
       #
-      # AvThetaの計算（各点の回帰直線の角度）：j1, j2が出た機会についでに計算。
+      # Calculation of AvTheta
       #
 
       AvX <- mean(dX[[track.i]][j1:j2])
       AvY <- mean(dY[[track.i]][j1:j2])
       u <- dX[[track.i]][j1:j2]-AvX
       v <- dY[[track.i]][j1:j2]-AvY
-      s2 <- cov(cbind(u,v)) #分散、共分散行列 s2[1,1]=Sxx, s2[1,2]=Sxy, s2[2,2]=Syy
-      ev <- eigen(s2)$values[1] #固有値
-      if(s2[1,2]==0){  #相関係数＝0のとき垂直または水平の回帰直線
-        if(s2[1,1]>s2[2,2]){tempAvTheta[j]<-0} #横長
-        if(s2[1,1]<s2[2,2]){tempAvTheta[j]<-90} #縦長
-        if(s2[1,1]==s2[2,2]){tempAvTheta[j]<-NA} #方向性のない無相関分布
+      s2 <- cov(cbind(u,v))
+      ev <- eigen(s2)$values[1]
+      if(s2[1,2]==0){
+        if(s2[1,1]>s2[2,2]){tempAvTheta[j]<-0}
+        if(s2[1,1]<s2[2,2]){tempAvTheta[j]<-90}
+        if(s2[1,1]==s2[2,2]){tempAvTheta[j]<-NA}
       }else{
-        tempAvTheta[j] <- atan(s2[1,2]/(ev-s2[2,2]))/pi*180 #斜めの時回帰直線の角度
+        tempAvTheta[j] <- atan(s2[1,2]/(ev-s2[2,2]))/pi*180
       }
 
-      #進行方向を考慮する。対象とする点群の最初と最後を比較。
-      if(s2[1,1]>=s2[2,2]){  #横長の時、u(X座標値)で判断。
-        if(u[1]>u[length(u)]){ #Xのマイナス方向に進んでいるので角度を修正。
+      if(s2[1,1]>=s2[2,2]){
+        if(u[1]>u[length(u)]){
           if(tempAvTheta[j]>0) tempAvTheta[j] <- tempAvTheta[j]-180
           else tempAvTheta[j] <- tempAvTheta[j]+180
         }
-      }else{  #縦長の時、v(Y座標値)で判断。
-        if(v[1]>v[length(v)] && tempAvTheta[j]>0) tempAvTheta[j] <- tempAvTheta[j]-180 #マイナス方向に進んでいて角度が正の場合修正
-        else if(v[1]<v[length(v)] && tempAvTheta[j]<0) tempAvTheta[j] <- tempAvTheta[j]+180 #プラス方向に進んでいて角度が負の場合修正
+      }else{
+        if(v[1]>v[length(v)] && tempAvTheta[j]>0) tempAvTheta[j] <- tempAvTheta[j]-180
+        else if(v[1]<v[length(v)] && tempAvTheta[j]<0) tempAvTheta[j] <- tempAvTheta[j]+180
       }
     }
   }
@@ -1849,11 +1560,9 @@ findPir <- function(from=1, to=track.n){
 }
 
 
-#関数findPirA
+#findPirA
 co$findPirA<-'
 findPirA()
-シャープターンを進行角の変化が90°以上の点として同定。
-この判定基準によりTurnRunAを算出。AvThetaは計算しないので、AvThetaを必要とする場合はfindPirを実行する必要がある。
 '
 findPirA <- function(){
   cat(paste("Total tracks ", track.n, "\nProcessing track no:\n"))
@@ -1890,12 +1599,9 @@ findPirA <- function(){
 }
 
 
-#関数findShortTurn
+#findShortTurn
 co$findShortTurn<-'
 findShortTurn(from=1, to=track.n)
-ショートターンを同定。シャープターンではgauge(0.3mm)を使っていたのに対し、
-gauge3(0.1mm)を使って計算する。時間がかかる。
-ShortTurnを算出。
 '
 findShortTurn <- function(from=1, to=track.n){
   cat(paste("Total tracks ", track.n, "\nProcessing track no:\n"))
@@ -1904,7 +1610,7 @@ findShortTurn <- function(from=1, to=track.n){
   }
   else{
     if(length(TurnRun) != from-1){
-      cat("fromの値が不適当です。")
+      cat("Illegal value of from")
       return
     }
   }
@@ -1918,7 +1624,7 @@ findShortTurn <- function(from=1, to=track.n){
     flag2 <- FALSE
     cumL <- 0
     for(j11 in (j-1):1){
-      cumL <- cumL + dL[[track.i]][j11] #高速化のためまずは積算距離で計算し次に直線距離を計算。
+      cumL <- cumL + dL[[track.i]][j11]
       if(cumL > gauge3) break
     }
     for(j1 in j11:1){
@@ -1952,11 +1658,9 @@ findShortTurn <- function(from=1, to=track.n){
 }
 
 
-#関数calc.PirRun
+#calc.PirRun
 co$calc.PirRun<-'
 calc.PirRun()
-ピルエット同定。
-TurnRunからPirRunを計算。
 '
 calc.PirRun <- function(){
   PirRun <<- list()
@@ -1971,8 +1675,8 @@ calc.PirRun <- function(){
     RunEnd <- (2:(point.n[track.i]))[TurnRun[[track.i]][1:(point.n[track.i]-1)]=="R" & TurnRun[[track.i]][2:point.n[track.i]]=="T"]
     if(length(RunEnd)>=2){
       for(i in 1:(length(RunEnd)-1)){
-        if(dT[[track.i]][RunEnd[i+1]]-dT[[track.i]][RunStart[i]]<=Tcrit){ #Tcritより短いRun
-          tempPirRun[RunStart[i]:RunEnd[i+1]] <- "P"  #Pで塗りつぶす。
+        if(dT[[track.i]][RunEnd[i+1]]-dT[[track.i]][RunStart[i]]<=Tcrit){
+          tempPirRun[RunStart[i]:RunEnd[i+1]] <- "P"
         }
       }
     }
@@ -1983,7 +1687,7 @@ calc.PirRun <- function(){
     PirEnd <- (1:(point.n[track.i]-1))[tempPirRun[1:(point.n[track.i]-1)]=="P" & tempPirRun[2:point.n[track.i]]=="R"]
     for(i in PirStart){
       l1 <- 0
-      for(i1 in (i-1):1){ #iより前gauge2+gaugeの点をi1
+      for(i1 in (i-1):1){
         l1 <- l1 + dL[[track.i]][i1]
         if(l1>=gauge+gauge22) break  #0.8mm
         else tempsurround[i1] <- "P"
@@ -1991,7 +1695,7 @@ calc.PirRun <- function(){
     }
     for(i in PirEnd){
       l1 <- 0
-      for(i1 in (i+1):point.n[track.i]){ #iより前gauge2+gaugeの点をi1
+      for(i1 in (i+1):point.n[track.i]){
         l1 <- l1 + dL[[track.i]][i1-1]
         if(l1>=gauge+gauge22) break  #0.8mm
         else tempsurround[i1] <- "P"
@@ -2004,13 +1708,9 @@ calc.PirRun <- function(){
 }
 
 
-#関数calc.PirRunA
+#calc.PirRunA
 co$calc.PirRunA<-'
 calc.PirRunA()
-ピルエット同定。
-TurnRunAからPirRunAを計算。Tcritの値を用いる。
-TurnStartA, TurnEndA, PirStartA, PirEndAも計算。
-ついでにPirsurroundAも計算。
 '
 calc.PirRunA <- function(){
   PirRunA <<- list()
@@ -2025,8 +1725,8 @@ calc.PirRunA <- function(){
     RunEndA <- (2:(point.n[track.i]))[TurnRunA[[track.i]][1:(point.n[track.i]-1)]=="R" & TurnRunA[[track.i]][2:point.n[track.i]]=="T"]
     if(length(RunEndA)>=2){
       for(i in 1:(length(RunEndA)-1)){
-        if(dT[[track.i]][RunEndA[i+1]]-dT[[track.i]][RunStartA[i]]<=Tcrit){ #Tcritより短いRun
-          tempPirRunA[RunStartA[i]:RunEndA[i+1]] <- "P"  #Pで塗りつぶす。
+        if(dT[[track.i]][RunEndA[i+1]]-dT[[track.i]][RunStartA[i]]<=Tcrit){
+          tempPirRunA[RunStartA[i]:RunEndA[i+1]] <- "P"
         }
       }
     }
@@ -2037,7 +1737,7 @@ calc.PirRunA <- function(){
     localPirEndA <- (1:(point.n[track.i]-1))[tempPirRunA[1:(point.n[track.i]-1)]=="P" & tempPirRunA[2:point.n[track.i]]=="R"]
     for(i in localPirStartA){
       l1 <- 0
-      for(i1 in (i-1):1){ #iより前gauge2+gaugeの点をi1
+      for(i1 in (i-1):1){
         l1 <- l1 + dL[[track.i]][i1]
         if(l1>=gauge+gauge22) break  #0.8mm
         else tempsurroundA[i1] <- "P"
@@ -2045,7 +1745,7 @@ calc.PirRunA <- function(){
     }
     for(i in localPirEndA){
       l1 <- 0
-      for(i1 in (i+1):point.n[track.i]){ #iより前gauge2+gaugeの点をi1
+      for(i1 in (i+1):point.n[track.i]){
         l1 <- l1 + dL[[track.i]][i1-1]
         if(l1>=gauge+gauge22) break  #0.8mm
         else tempsurroundA[i1] <- "P"
@@ -2075,11 +1775,9 @@ calc.PirRunA <- function(){
 }
 
 
-#関数calc.StartEnd
+#calc.StartEnd
 co$calc.StartEnd<-'
 calc.StartEnd()
-TurnStart,TurnEnd,PirStart,PirEnd（いずれもlogical）を計算。
-calc.PirRunの最後で実行されるので通常は単独で実行する必要はない。
 '
 calc.StartEnd <- function(){
   TurnStart <<- list()
@@ -2104,14 +1802,12 @@ calc.StartEnd <- function(){
 
 
 #################################
-# TurnRateの計算
+# Calculation of TurnRate
 #################################
 
-#関数calc.TurnRate
+#calc.TurnRate
 co$calc.TurnRate<-'
 calc.TurnRate()
-TurnRate（曲進率＝curving rate）を計算
-必ずfindPirのあとに実行。
 '
 calc.TurnRate <- function(){
   cat("Processing track no:\n")
@@ -2121,12 +1817,12 @@ calc.TurnRate <- function(){
     tempTR <- rep(NA,point.n[track.i])
     if(point.n[track.i]>=3){
     for(i in 2:(point.n[track.i]-1)){
-      if(TurnRun[[track.i]][i]!="R") next      #addition for 5.5β5 RunでのみTurnRateが定義できる。
+      if(TurnRun[[track.i]][i]!="R") next
       flag1 <- FALSE
        l1 <- 0
-      for(i1 in (i-1):1){ #iより前gauge2の点をi1
-        if(TurnRun[[track.i]][i1]!="R") break      #addition for 5.5β5
-        l1 <- l1 + dL[[track.i]][i1]               #積算距離で計算
+      for(i1 in (i-1):1){
+        if(TurnRun[[track.i]][i1]!="R") break      #addition for 5.5beta5
+        l1 <- l1 + dL[[track.i]][i1] 
         if(l1>=gauge22){
           flag1 <- TRUE
           break
@@ -2134,7 +1830,7 @@ calc.TurnRate <- function(){
       }
       flag2 <- FALSE
      l2 <- 0
-      for(i2 in (i+1):point.n[track.i]){ #iより後gauge2の点をi2
+      for(i2 in (i+1):point.n[track.i]){ 
         if(TurnRun[[track.i]][i2]!="R") break      #addition for 5.5β5
         l2 <- l2 + dL[[track.i]][i2-1]
         if(l2>=gauge22){
@@ -2161,18 +1857,12 @@ calc.TurnRate <- function(){
 }
 
 #######################
-# Bearingの計算
+# Calculation of Bearing
 #######################
 
-#関数calc.Bearing
+#calc.Bearing
 co$calc.Bearing<-'
 calc.Bearing(plate_format, odordirection="closer", suppress.numerical=F)
-Bearingを計算。Thetaも計算。
-グローバルパラメータgradientが"numerical"の場合はsuppress.numerical=Tでない限り、
-濃度勾配の方向に対しての角度をBearingとする。
-plate_format="12point"/"2point"/"kunitomo"/"center-peak"/"1point" スポットしたフォーマット。"none"も許される。
-2pointの場合、odordirection="closer"/"midline" 近い方か中央か。
-1pointの場合、スポット位置の座標はシステムに設定されている(peakX,peakY)をそのまま使う。
 '
 calc.Bearing <- function(plate_format, odordirection="closer", suppress.numerical=F,tbl=NULL){
   if(!is.null(tbl)){
@@ -2193,7 +1883,7 @@ calc.Bearing <- function(plate_format, odordirection="closer", suppress.numerica
       X <- dX[[track.i]][i]
       Y <- dY[[track.i]][i]
      # browser()
-      if(plate_format=="12point" || plate_format=="kunitomo" || plate_format=="center-peak" || plate_format=="1point" || (plate_format=="2point" && odordirection == "closer")){ #5.1 kunitomo追加, #5.4center-peak追加
+      if(plate_format=="12point" || plate_format=="kunitomo" || plate_format=="center-peak" || plate_format=="1point" || (plate_format=="2point" && odordirection == "closer")){
         if(plate_format=="12point"){
           peakX <- floor(X/20)*20+10
           peakY <- floor(Y/20)*20+10
@@ -2232,7 +1922,7 @@ calc.Bearing <- function(plate_format, odordirection="closer", suppress.numerica
         
         else if(plate_format=="1point"){
           if(!exists("peakX")||!exists("peakY")){
-            cat("\nエラー：peakX, peakYが定義されていないのに1pointを指定しました。\n")
+            cat("\nError: 1point specified even if peakX, peakY are not set\n")
             return()
           }
         }
@@ -2263,12 +1953,12 @@ calc.Bearing <- function(plate_format, odordirection="closer", suppress.numerica
 	    peakDir <- NA
 		Distance <- NA
 	  }else {
-        print("パラメーターplate_formatまたはodordirectionが不正です。")
+        print("Illegal parameters plate_format or odordirection")
         return
       }
       tempDist <- c(tempDist, Distance)
-      if(gradient=="numerical" && !suppress.numerical){  #5.2 濃度として数値データを用いる場合は数値的な勾配に対しての方向をpeakDirとする。
-        peakDir <- atan(dCdY[[track.i]][i]/dCdX[[track.i]][i])/pi*180 #dCdX=0でも正しく90度としてくれる。
+      if(gradient=="numerical" && !suppress.numerical){
+        peakDir <- atan(dCdY[[track.i]][i]/dCdX[[track.i]][i])/pi*180
         if(!is.na(dCdY[[track.i]][i]) && !is.na(dCdX[[track.i]][i])){
           if(dCdX[[track.i]][i]<0 & dCdY[[track.i]][i]>=0) peakDir<-peakDir+180
           if(dCdX[[track.i]][i]<0 & dCdY[[track.i]][i]<0) peakDir<-peakDir-180
@@ -2298,14 +1988,12 @@ calc.Bearing <- function(plate_format, odordirection="closer", suppress.numerica
 }
 
 ##################################################
-# ピルエット解析
+# Pirouette analysis
 ##################################################
 
-#関数before.after
+#before.after
 co$before.after<-'
 before.after(tracks=1:track.n, division=12, timewindow=c(0,maxT))
-ピルエット（Piraround）前後のBearingを抽出。
-beforeTheta, afterTheta, deltaTheta, bearingThetaを作成（いずれもベクトル）
 '
 before.after <- function(tracks=1:track.n, division=12, timewindow=c(0,maxT),tbl=NULL){
   if(!is.null(tbl)){
@@ -2321,24 +2009,24 @@ before.after <- function(tracks=1:track.n, division=12, timewindow=c(0,maxT),tbl
   for(track.i in tracks){
     n <- point.n[track.i]
     timebool <-  dT[[track.i]]>=timewindow[1] & dT[[track.i]]<=timewindow[2]
-    timeindex <- which(timebool)  #timewindowにはいる添え字の列
+    timeindex <- which(timebool)
     if(length(timeindex)>0){
       from <- timeindex[1]
       to <- timeindex[length(timeindex)]
-      if (!all(timebool[from:to])){print("時間構造が異常です。 track = ", track.i); return()}
+      if (!all(timebool[from:to])){print("Abnormal time structure. track = ", track.i); return()}
       R <- (Pirsurround[[track.i]] == "R")
       P <- (Pirsurround[[track.i]] == "P")
-      start <- which(timebool & R & c(P[2:n],F)) #ピルエット開始点ひとつ前の添え字の列
-      end <- which(timebool & R & c(F,P[1:(n-1)])) #ピルエット終了点のひとつ後の添え字の列
+      start <- which(timebool & R & c(P[2:n],F))
+      end <- which(timebool & R & c(F,P[1:(n-1)]))
       if(length(end)>0 && length(start)>0){
       #if(track.i == 161){print(start);print(end)}
       if(end[1]<=start[1]) end <- end[-1]
       if(length(end)>0){
         if(length(start)>length(end)) start <- start[-length(start)]
-          if(length(start) != length(end)) {print(paste("長さが違います。",track.i));return()}
-          if(!all(start < end)) {print(paste("大小が違います。",track.i));print(start);print(end);return()}
+          if(length(start) != length(end)) {print(paste("Wrong length",track.i));return()}
+          if(!all(start < end)) {print(paste("Wrong large/small",track.i));print(start);print(end);return()}
           #if(track.i == 39){print(start);print(end)}
-          if(!all(start[-1] >= end[-length(end)])) {print(paste("大小順が違います。",track.i));return()}
+          if(!all(start[-1] >= end[-length(end)])) {print(paste("Wrong large/small order",track.i));return()}
           startTheta <- AvTheta[[track.i]][start]
           bearing <- Bearing[[track.i]][start]
           endTheta <- AvTheta[[track.i]][end]
@@ -2374,7 +2062,7 @@ before.after <- function(tracks=1:track.n, division=12, timewindow=c(0,maxT),tbl
       }
     }
   }
-  #Bearing -> deltaThetaの関係の数値（相対頻度のヒストグラム）BdeltaTheta[division, division] 360/division°区切り
+
   BdeltaTheta <<- matrix(0, division, division)
   for(i in 1:length(bearingTheta))
   {
@@ -2389,21 +2077,17 @@ before.after <- function(tracks=1:track.n, division=12, timewindow=c(0,maxT),tbl
   image(seq(-180,180,360/division),seq(-180,180,360/division),BdeltaTheta,col=gray(50:0/50),xlab="Bearing",ylab="deltaTheta", main="Before-After")
 }
 
-#以下5.1での追加
+#addtion at 5.1
 
 ##################################################
-# 塩濃度計算
+# Calculation of chemical concentration
 ##################################################
 
-#関数calc.C
+#calc.C
 co$calc.C<-'
 calc.C(type="12point"|"plug")
-線虫の位置における塩濃度および塩濃度勾配を計算。
-リストdC,dCdT,dCdX,dCdY,dCdLatを作成。
-12点NaClスポットの場合type="12point"
-拡散シミュレーションデータを用いる場合type="plug"
 '
-calc.C <- function(type="12point",tbl=NULL){ #12pointの場合
+calc.C <- function(type="12point",tbl=NULL){ #12point
   if(!is.null(tbl)){
   for(i in 1:nrow(tbl)){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
@@ -2445,7 +2129,7 @@ calc.C <- function(type="12point",tbl=NULL){ #12pointの場合
         }
       }
       if(type=="plug"){
-        if(!exists("Cxyt") || !exists("dCdXxyt") || !exists("dCdYxyt")){cat("まずread.Cを実行してください。");return}
+        if(!exists("Cxyt") || !exists("dCdXxyt") || !exists("dCdYxyt")){cat("Execute read.C first.\n");return}
         currentC<-get.C(dX[[track.i]][i],dY[[track.i]][i],dT[[track.i]][i])
         currentdCdX<-get.dCdX(dX[[track.i]][i],dY[[track.i]][i],dT[[track.i]][i])
         currentdCdY<-get.dCdY(dX[[track.i]][i],dY[[track.i]][i],dT[[track.i]][i])
@@ -2465,16 +2149,13 @@ calc.C <- function(type="12point",tbl=NULL){ #12pointの場合
     dCdY <<- c(dCdY, list(tempdCdY))
     dCdLat <<- c(dCdLat, list(tempdCdLat))
   }
-    gradient <<- "numerical"   #5.9.8での追加
+    gradient <<- "numerical"   #5.9.8
     cat("\rDone.\n")
 }
 
-#関数calc.C2
+#calc.C2
 co$calc.C2<-'
 calc.C2()
-calc.Cの別法。
-12点NaClスポットでの塩濃度および塩濃度勾配を計算。
-リストdC, dCdT, dCdX, dCdYを作成。
 '
 calc.C2 <- function(){
   PeakX <<- c(-30,-30,-10,-10,-10,-10,10,10,10,10,30,30)
@@ -2483,9 +2164,9 @@ calc.C2 <- function(){
   dCdX <<- lapply(1:track.n, function(track.i) sapply(1:point.n[track.i], function(i) calc.C2.func1(track.i, i, 2)))
   dCdY <<- lapply(1:track.n, function(track.i) sapply(1:point.n[track.i], function(i) calc.C2.func1(track.i, i, 3)))
   dCdT <<- lapply(1:track.n, function(track.i) c(NA,(dC[[track.i]][-1]-dC[[track.i]][-point.n[track.i]])/(dT[[track.i]][-1]-dT[[track.i]][-point.n[track.i]])))
-  gradient <<- "numerical"   #5.9.8での追加
+  gradient <<- "numerical"   #5.9.8
 }
-#calc.C2用の関数
+#For calc.C2
 calc.C2.func1 <- function(track.i, i, sel){
   DX <- dX[[track.i]][i]-PeakX
   DY <- dY[[track.i]][i]-PeakY
@@ -2496,12 +2177,9 @@ calc.C2.func1 <- function(track.i, i, sel){
   if(sel==3){return(sum(DY*C1/20/DiffusionConst/t))}
 }
 
-#関数get.C
-#拡散シミュレーションデータを利用する場合にのみ適用。
-#x,y,tを与えるとその時刻(秒)、座標における濃度を線形補間により計算して戻す。
-#simulator.unit=1のとき1mm単位、1分単位。simulator.unit=0.2のとき0.2mm単位、1分単位。
+#get.C
 get.C<-function(x,y,t){
-  if(!exists("Cxyt")){cat("Cxytがありません。\n");return}
+  if(!exists("Cxyt")){cat("No Cxyt found.\n");return}
   t <- t/60
   x0 <- floor(x/simulator.unit+0.5)
   x1 <- ceiling(x/simulator.unit+0.5)
@@ -2524,9 +2202,7 @@ get.C<-function(x,y,t){
   return(C0*(1-td)+C1*td)
 }
 
-#関数get.dCdX
-#拡散シミュレーションデータを利用する場合にのみ適用。
-#x,y,tを与えるとその時刻(秒)、座標における濃度を線形補間により計算して戻す。
+#get.dCdX
 get.dCdX<-function(x,y,t){
   if(!exists("dCdXxyt")){cat("dCdXxytがありません。\n");return}
   t <- t/60
@@ -2549,11 +2225,9 @@ get.dCdX<-function(x,y,t){
   }
 }
 
-#関数get.dCdY
-#拡散シミュレーションデータを利用する場合にのみ適用。
-#x,y,tを与えるとその時刻(秒)、座標における濃度を線形補間により計算して戻す。
+#get.dCdY
 get.dCdY<-function(x,y,t){
-  if(!exists("dCdYxyt")){cat("dCdYxytがありません。\n");return}
+  if(!exists("dCdYxyt")){cat("No dCdYxyt found.\n");return}
   t <- t/60
   x0 <- floor(x/simulator.unit)
   x1 <- ceiling(x/simulator.unit)
@@ -2575,32 +2249,17 @@ get.dCdY<-function(x,y,t){
 }
 
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-###☆☆☆☆☆☆☆☆                           ☆☆☆☆
-co$oooo<-'\n☆☆☆☆     高次の解析と表示     ☆☆☆☆
-'##☆☆☆☆☆☆☆☆                           ☆☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+#######################################################
+###################                           ########
+co$oooo<-'\n########     Higher order analyses     ########
+'##################                           ########
+#######################################################
 
-#関数classify #5.9での追加
+#classify #5.9
 co$classify<-'
-generic関数
+generic
 classify<-function(x=dT, y=dV, spacer1=NULL, spacer2=NULL, spacer3=NA, spacer4=NULL,
  xmin=0, xbin=100, xmax=maxT, plate=F, PirRunSelect="", timemin=0, timemax=maxT)
-yに解析したいデータを含む標準形式のリストを渡す。
-xに分類指標のデータを含む標準形式のリストを渡す。
-結果はベクトルのリストとしてylistに返される。
-例えばy=dV, x=dTであれば、一定時間帯ごとに分けた速度データの列を要素とするリストとしてylistが作成される。
-xの値はxminからxmaxの間をxbinごとに区切る。
-PirRunSelect = "R"ならRunの部分のみ、PirRunSelect = "P"ならPirouetteの部分のみ、
-PirRunSelect = ""ならすべてのデータを採用。
-timeminとtimemaxが指定されているときは、その時間範囲だけのデータを採用。
-各分類のデータの数をyn, 平均をymean、標準偏差をystdev。
-plate = Tならプレートごと集計。
-xとyのベクトルの長さが異なる場合のためにスペーサーが設けられている。
-xの各ベクトルの先頭にspacer1、末尾にspacer2、
-yの各ベクトルの先頭にspacer3、末尾にspacer4 を追加してから計算される。
-帰り値(outとする)は(ylist, yn, ymean, ystdev)のリスト。
-out$ylist[[plate.i]][[rank.i]]として参照。
 '
 classify<-function(x=dT, y=dV, spacer1=NULL, spacer2=NULL, spacer3=NA, spacer4=NULL, xmin=0, xbin=100, xmax=maxT, plate=F, PirRunSelect="", timemin=0, timemax=maxT, tbl=NULL){
   if(!is.null(tbl)){
@@ -2644,12 +2303,8 @@ classify<-function(x=dT, y=dV, spacer1=NULL, spacer2=NULL, spacer3=NA, spacer4=N
 }
 
 
-#関数calc.speed #5.2での追加
+#calc.speed #addition at 5.2
 co$calc.speed<-'
-timespan秒ごとに区切って平均の速度を算出（Runの部分のみ）。
-結果をmeanVTとして出力。同時にグラフを描画。
-全平均速度としてworm.speedを出力。
-timespanはmeanVT.timespanとして保存。
 '
 calc.speed<-function(timespan=100, maxtime=maxT, tbl=NULL){
   if(!is.null(tbl)){
@@ -2671,10 +2326,9 @@ calc.speed<-function(timespan=100, maxtime=maxT, tbl=NULL){
   plot(seq(timespan/2, (ceiling(maxtime/timespan)-1/2)*timespan, timespan), meanVT, main="Worm Speed", xlab="T (sec)", ylab="average run speed (mm/sec)")
 }
 
-#関数weathervane.graph
+#weathervane.graph
 co$weathervane.graph<-'
 weathervane.graph(xfrom=-2.5,xto=2.5,xby=0.5,plates=1:plate.n, ylim=c(-40,40), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA)
-横軸にdCdLat, 縦軸にTurnRateのグラフを描く。対象とする濃度範囲をCfrom,Ctoで時間範囲をTfrom,Ttoで指定。
 '
 weathervane.graph<-function(xfrom=-2.5,xto=2.5,xby=0.5,plates=1:plate.n, ylim=c(-40,40), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA,tbl=NULL){
   if(!is.null(tbl)){
@@ -2707,11 +2361,9 @@ weathervane.graph<-function(xfrom=-2.5,xto=2.5,xby=0.5,plates=1:plate.n, ylim=c(
   #print(RankedTR)
 }
 
-#関数pirouette.graph
+#pirouette.graph
 co$pirouette.graph<-'
 pirouette.graph(xfrom=-0.045,xto=0.045,xby=0.01,plates=1:plate.n, ylim=c(0,0.14), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA, mincount=10)
-横軸にdCdT, 縦軸にピルエット頻度のグラフを描く。対象とする濃度範囲をCfrom,Ctoで指定。
-時間の範囲をTfrom,Ttoで指定。
 '
 pirouette.graph<-function(xfrom=-0.045,xto=0.045,xby=0.01,plates=1:plate.n, ylim=c(0,0.14), Cfrom=NA, Cto=NA, Tfrom=NA, Tto=NA, mincount=10, tbl=NULL){
   if(!is.null(tbl)){
@@ -2756,12 +2408,9 @@ pirouette.graph<-function(xfrom=-0.045,xto=0.045,xby=0.01,plates=1:plate.n, ylim
   arrows(seq(xfrom+xby/2,xto-xby/2,length.out=xn)[isna], RankedPir.mean[isna], seq(xfrom+xby/2,xto-xby/2,length.out=xn)[isna], (RankedPir.mean-RankedPir.sem)[isna], length=0.05,angle=90)
 }
 
-#関数plotTRB
+#plotTRB
 co$plotTRB<-'
-plotTRB(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all"):
-横軸にBearing, 縦軸にTurnRateのグラフを描く。必要に応じ表示する軌跡と時間範囲を指定。
-timewindow=c(開始時刻, 終了時刻)
-type="all"：全データを一度に集計, type="plate"：プレート毎に平均したものの平均と標準偏差
+plotTRB(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all")
 '
 plotTRB <- function(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all", tbl=NULL){
   if(!is.null(tbl)){
@@ -2827,11 +2476,9 @@ plotTRB <- function(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=
   }
 }
 
-#関数multiTRB
+#multiTRB
 co$multiTRB<-'
 multiTRB(step, division, mrow, mcol)
-プロット領域をmrow行×mcol列に分け、time0から時間間隔stepごとに時間をわけて、
-横軸にBearing, 縦軸にTurnRateのグラフをdivision個描く。
 '
 multiTRB <- function(step, division, mrow, mcol, tbl=NULL){
   if(!is.null(tbl)){
@@ -2846,16 +2493,10 @@ multiTRB <- function(step, division, mrow, mcol, tbl=NULL){
   par(mfrow=c(1,1), mai=c(1,1,1,1))
 }
 
-### 関数calc.TRBs ###
+### calc.TRBs ###
 
 co$calc.TRBs<-'
 calc.TRBs(time.division=12, dist.division=4, sbear.division=10, tracks=1:track.n, type="plate")
-TurningRateをBearingのsine、距離、時間別に平均する。それぞれをsbear.division, dist.division, time.divisionの数の区間に分割して計算。
-時間の最大値はmaxT, 距離の最大値はmaxdist（デフォールトでは60）。異なる値にしたいときは、maxdist <- xx として変更しておく。
-type="all": 全データ一括処理。TurnRateを3次元配列TRmean, TRsd(time.division, dist.division, sbear.division)として出力。
-type="plate":プレートごとのデータ。TurnRateを4次元配列TRmean, TRsd(time.division, dist.division, sbear.division, plate.n)として出力。
-type="all"のときはplatesは無効。type="plate"のときはtracksは無効。WVIndexを計算。
-type="plate"のときはsin(Bearing)とTurnRateの関係の回帰直線の傾きとしてWVIndexpを計算。
 '
 calc.TRBs <- function(time.division=12, dist.division=4, sbear.division=10, tracks=1:track.n, type="plate", tbl=NULL){
   if(!is.null(tbl)){
@@ -2863,7 +2504,7 @@ calc.TRBs <- function(time.division=12, dist.division=4, sbear.division=10, trac
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-  #pirhistc5を改変して作成。
+  #pirhistc5 is modified
   x <- seq(-1+1/sbear.division, 1, by=2/sbear.division)
   plates=1:plate.n
   if(type=="all")
@@ -2945,42 +2586,20 @@ calc.TRBs <- function(time.division=12, dist.division=4, sbear.division=10, trac
           }
         }
       }
-  }# for(plate.i)ここまで
+  }#
   
   cat("All tracks processed\n")
   if(type=="all"){
-    # TRsd は標準誤差
+    # TRsd is sd
     TRsd[TRcount>=2] <<- sqrt(((TR2sum[TRcount>=2] - TRcount[TRcount>=2]*TRmean[TRcount>=2]*TRmean[TRcount>=2])/(TRcount[TRcount>=2]-1))/(TRcount[TRcount>=2]-1))
   }
   if(type=="all") cat(paste("\n", "2D array WVIndex, 3D arrays TRmean and TRsd etc were created.\n"))
   if(type=="plate") cat(paste("\n", "3D array WVIndexp and 4D arrays TRmeanp and TRsdp etc were created.\n"))
 }
 
-#関数plotTRBS
+#plotTRBS
 co$plotTRBS<-'
 plotTRBS(time.n=1, dist.n=1, mrow, mcol,type="plate time")
-calc.TRBsで計算したTRmeanまたはTRmeanpのデータを使う。
-プロット領域をmrow行×mcol列に分け、
-
-type="time"の場合：
-dist.nで指定した距離区画について、0からmaxTの時間をcalc.TRBs実行時に指定した数にわけて、
-横軸にsin Bearing, 縦軸にTurnRateのグラフを描く。
-time.nは入力不要。入力しても無視される。
-
-type="dist"の場合：
-time.nで指定した時間区画について、0からmaxdistの距離をcalc.TRBs実行時に指定した数にわけて、
-横軸にsin Bearing, 縦軸にTurnRateのグラフを描く。
-dist.nは入力不要。入力しても無視される。
-
-type="both"の場合：
-0からmaxTの時間をcalc.TRBs実行時に指定した数にわけて、ひとつのグラフにすべての距離区画を違うシンボルでプロット。
-time.n、dist.nは入力不要。入力しても無視される。
-
-type="plate time"の場合：
-TRmeanpのデータを使い、
-dist.nで指定した距離区画について、0からmaxTの時間をcalc.TRBs実行時に指定した数にわけて、
-plateごとの数値の平均値とエラーバー（SD）をプロットする。
-time.nは入力不要。入力しても無視される。
 '
 plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
   if(!is.null(tbl)){
@@ -2990,10 +2609,10 @@ plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
   }
   par(mfrow=c(mrow,mcol), mai=c(0.7,0.7,0.5,0.3))
   if(type=="plate time"){
-	if(!exists("TRmeanp")){cat('TRmeanpがありません。まずcalc.TRBs(type="plate")を実行して下さい。\n');return()}
+	if(!exists("TRmeanp")){cat('No TRmeanp. Execute calc.TRBs(type="plate")\n');return()}
     sbear.division <- dim(TRmeanp)[3]
   } else {
-    if(!exists("TRmean")){cat('TRmeanがありません。まずcalc.TRBs(type="all")を実行して下さい。\n');return()}
+    if(!exists("TRmean")){cat('No TRmean. Execute calc.TRBs(type="all")\n');return()}
     sbear.division <- dim(TRmean)[3]
   }
   sbear.mid <- sapply(1:sbear.division, function(i) 2/sbear.division*(i-0.5)-1)
@@ -3001,7 +2620,7 @@ plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
   if(type=="time")
   {
     time.n <- dim(TRmean)[1]
-    if(dist.n>dim(TRmean)[2]){cat("dist.nがcalc.TRBsで指定した分割数を超過しています。\n");return()}
+    if(dist.n>dim(TRmean)[2]){cat("dist.n is larger than that set by calc.TRBs\n");return()}
     for(time.i in 1:time.n)
     {
       plot(sbear.mid, TRmean[time.i, dist.n, ], type = "b", xlim=c(-1,1), ylim=c(-8,8), xlab="sin Bearing", ylab="TurnRate", main=paste("T=",maxT/time.n*(time.i-1),"-",maxT/time.n*time.i))
@@ -3012,7 +2631,7 @@ plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
   if(type=="dist")
   {
     dist.n <- dim(TRmean)[2]
-    if(time.n>dim(TRmean)[1]){cat("time.nがcalc.TRBsで指定した分割数を超過しています。\n");return()}
+    if(time.n>dim(TRmean)[1]){cat("time.n is larget than set by calc.TRBs\n");return()}
     for(dist.i in 1:dist.n)
     {
       plot(sbear.mid, TRmean[time.n, dist.i, ], type = "b", xlim=c(-1,1), ylim=c(-8,8), xlab="sin Bearing", ylab="TurnRate", main=paste("Distance=",maxdist/dist.n*(dist.i-1),"-",maxdist/dist.n*dist.i))
@@ -3038,7 +2657,7 @@ plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
 	if(type=="plate time")
 	{
     time.n <- dim(TRmean)[1]
-    if(dist.n>dim(TRmean)[2]){cat("dist.nがcalc.TRBsで指定した分割数を超過しています。\n");return()}
+    if(dist.n>dim(TRmean)[2]){cat("dist.n is larger than set by calc.TRBs\n");return()}
 	Mean <- array(NA, sbear.division)
  	Sd <- array(NA, sbear.division)
 	for(time.i in 1:time.n)
@@ -3055,13 +2674,9 @@ plotTRBS <- function(time.n=1, dist.n=1, mrow, mcol, type="time", tbl){
   par(mfrow=c(1,1), mai=c(1,1,1,1))
 }
 
-#関数plotTRBcircles
+#plotTRBcircles
 co$plotTRBcircles<-'
 plotTRBcircles(plates=1:plate.n)
-calc.TRBsで作成したWVIndexp[time.i, dist.i, plate.i]をもとに
-プレート間での平均と標準偏差、T検定を行い、
-p<=0.05のものについて、time-distanceグラフ上に
-WVIndexを円の大きさで表示する。
 '
 plotTRBcircles <- function(plates=1:plate.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3069,7 +2684,7 @@ plotTRBcircles <- function(plates=1:plate.n, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-  if(!exists("WVIndexp")){cat('\nWVIndexpがありません。まずcalc.TRBs(type="plate")を実行して下さい。\n');return()}
+  if(!exists("WVIndexp")){cat('\nNo WVIndexp found. Execute calc.TRBs(type="plate") first.\n');return()}
   time.division=dim(WVIndexp)[1]
   dist.division=dim(WVIndexp)[2]
   WVIndexMean <<- apply(array(WVIndexp[,,plates],c(dim(WVIndexp)[1],dim(WVIndexp)[2],length(plates))), c(1,2), mean, na.rm=T) #130911改変：長さが1だとそのディメンションがなくなってしまうことを防ぐため。
@@ -3107,8 +2722,8 @@ plotTRBcircles <- function(plates=1:plate.n, tbl=NULL){
 }
 
 
-#関数TRBlist
-#現在未使用
+#TRBlist
+# Not used
 TRBlist <- function(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all"){
 B<-360/division*((1:division)-0.5)-180  
   if(type == "plate"){
@@ -3137,12 +2752,9 @@ B<-360/division*((1:division)-0.5)-180
   }
 }
 
-#関数plotTRAT
+#plotTRAT
 co$plotTRAT<-'
-plotTRAT(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all"):
-横軸にAvTheta(進行方向), 縦軸にTurnRateのグラフを描く。必要に応じ表示する軌跡と時間範囲を指定。
-timewindow=c(開始時刻, 終了時刻)
-type="all"：全データを一度に集計, type="plate"：プレート毎に平均したものの平均と標準偏差。
+plotTRAT(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all")
 '
 plotTRAT <- function(tracks=1:track.n, plates=1:plate.n, division=12, timewindow=c(), type="all", tbl=NULL){
   if(!is.null(tbl)){
@@ -3205,11 +2817,9 @@ plotTRAT <- function(tracks=1:track.n, plates=1:plate.n, division=12, timewindow
   }
 }
 
-#関数multiTRAT
+#multiTRAT
 co$multiTRAT<-'
-multiTRAT(step, division, mrow, mcol):
-プロット領域をmrow行×mcol列に分け、time0から時間間隔stepごとに時間をわけて、
-横軸にAvTheta(進行方向), 縦軸にTurnRateのグラフをdivision個描く。
+multiTRAT(step, division, mrow, mcol)
 '
 multiTRAT <- function(step, division, mrow, mcol, tbl=NULL){
   if(!is.null(tbl)){
@@ -3225,9 +2835,9 @@ multiTRAT <- function(step, division, mrow, mcol, tbl=NULL){
 }
 
 
-#関数bahist
+#bahist
 co$bahist<-'
-bahist(division=12)：beforeThetaとafterThetaを二次元ヒストグラム化した数値を計算。あまり使わない。
+bahist(division=12)
 '
 bahist <- function(division=12, tbl=NULL){
   if(!is.null(tbl)){
@@ -3248,12 +2858,9 @@ bahist <- function(division=12, tbl=NULL){
 }
 
 
-#関数pirhist
+#pirhist
 co$pirhist<-'
-pirhist(timewindow=c(0,maxT), tracks=1:track.n)：ピルエット頻度のグラフを作るためのデータ作成。
-BPirStart：ピルエット開始時のBearingを列記したもの
-BRun：ラン全体のBearingを列記したもの（いずれもベクトル）
-が作成される。
+pirhist(timewindow=c(0,maxT), tracks=1:track.n)
 '
 pirhist <- function(timewindow=c(0,maxT), tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3266,19 +2873,15 @@ pirhist <- function(timewindow=c(0,maxT), tracks=1:track.n, tbl=NULL){
   for(track.i in tracks){
     cat(paste("\r", track.i, "      "))
     timebool <- dT[[track.i]] >= timewindow[1] & dT[[track.i]] <= timewindow[2]
-    BPirStart <<- c(BPirStart, Bearing[[track.i]][PirRun[[track.i]]=="R" & c(PirRun[[track.i]][-1]=="P",F) & timebool]) #時間範囲内でPir開始直前の値
-    BRun <<- c(BRun, Bearing[[track.i]][PirRun[[track.i]]=="R" & timebool]) #時間範囲内でRunの値
+    BPirStart <<- c(BPirStart, Bearing[[track.i]][PirRun[[track.i]]=="R" & c(PirRun[[track.i]][-1]=="P",F) & timebool])
+    BRun <<- c(BRun, Bearing[[track.i]][PirRun[[track.i]]=="R" & timebool])
   }
   cat(paste("\n", "vectors BPirStart and BRun were created.\n"))
 }
 
-#関数pirhist2
+#pirhist2
 co$pirhist2<-'
 pirhist2(timewindow=c(0,3600), tracks=1:track.n)
-pirhistと同じだが、Bearing2すなわち進行方向としてThetaでなくAvThetaを使って計算したBearingを列記する。
-BPirStart：ピルエット開始時のBearing2を列記したもの
-BRun：ラン全体のBearing2を列記したもの（いずれもベクトル）
-が作成される。
 '
 pirhist2 <- function(timewindow=c(0,maxT), tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3291,22 +2894,16 @@ pirhist2 <- function(timewindow=c(0,maxT), tracks=1:track.n, tbl=NULL){
   for(track.i in tracks){
     cat(paste("\r", track.i, "      "))
     timebool <- dT[[track.i]] >= timewindow[1] & dT[[track.i]] <= timewindow[2]
-    BPirStart <<- c(BPirStart, Bearing2[[track.i]][PirRun[[track.i]]=="R" & c(PirRun[[track.i]][-1]=="P",F) & timebool]) #時間範囲内でPir開始直前の値
-    BRun <<- c(BRun, Bearing2[[track.i]][PirRun[[track.i]]=="R" & timebool]) #時間範囲内でRunの値
+    BPirStart <<- c(BPirStart, Bearing2[[track.i]][PirRun[[track.i]]=="R" & c(PirRun[[track.i]][-1]=="P",F) & timebool])
+    BRun <<- c(BRun, Bearing2[[track.i]][PirRun[[track.i]]=="R" & timebool])
   }
   cat(paste("\n", "vectors BPirStart and BRun were created.\n"))
 }
 
 
-#関数pirhist3
+#pirhist3
 co$pirhist3<-'
 pirhist3(dist.division=4, timewindow=c(0,maxT), tracks=1:track.n)
-pirhistと同じだが距離別。距離は最大距離maxdistまでをdist.division分割し、
-最後にmaxdist以上というランクが来る。
-maxdistのデフォールトは60だが必要に応じ変更して使う。
-BPirStartd：ピルエット開始時のBearingを列記したもの
-BRund：ラン全体のBearingを列記したもの（いずれもリスト）
-が作成される。
 '
 pirhist3 <- function(dist.division=4, timewindow=c(0,maxT), tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3333,10 +2930,9 @@ pirhist3 <- function(dist.division=4, timewindow=c(0,maxT), tracks=1:track.n, tb
 }
 
 
-#関数BPirplot
+#BPirplot
 co$BPirplot<-'
-BPirplot(maxprobab=0.05): ピルエットグラフを距離別に表示。BPirStartdとBRundを必要とする。pirhist3の出力用。
-縦軸の最大値はmaxprobabで指定。
+BPirplot(maxprobab=0.05)
 '
 BPirplot<-function(maxprobab=0.05, tbl=NULL){
   if(!is.null(tbl)){
@@ -3345,7 +2941,7 @@ BPirplot<-function(maxprobab=0.05, tbl=NULL){
   }
   }
    if(!exists("BPirStartd") || !exists("BRund")){
-     cat("BPirStartd, BRundがありません。最初にpirhist3を実行してください。\n");return();
+     cat("No BPirStartd, BRund pirhist3\n");return();
    }
    dist.division <- length(BPirStartd)-1
    par(mfrow=c(ceiling(sqrt(dist.division)),ceiling(sqrt(dist.division))), mai=c(0.7,0.7,0.4,0.2))
@@ -3367,12 +2963,9 @@ BPirplot<-function(maxprobab=0.05, tbl=NULL){
 }
 
 
-#関数BPirplotc2d
+#BPirplotc2d
 co$BPirplotc2d<-'
 BPirplotc2d(maxprobab=0.05)
-pirhist3で作成したBPirStartd[[dist.division]]とBRund[[dist.division]]をもとに
-cos(Bearing)を横軸とした図を距離別に描く。
-縦軸の最大値はmaxprobabで指定。
 '
 BPirplotc2d<-function(maxprobab=0.05, tbl=NULL){
   if(!is.null(tbl)){
@@ -3380,7 +2973,7 @@ BPirplotc2d<-function(maxprobab=0.05, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("BPirStartd") || !exists("BRund")){cat("BPirStartd, BRundがありません。まずpirhist3を実行してください。");return()}
+   if(!exists("BPirStartd") || !exists("BRund")){cat("No BPirStartd, BRund found. Execute pirhist3\n");return()}
    dist.division <- length(BPirStartd)-1
    par(mfrow=c(ceiling(sqrt(dist.division)),ceiling(sqrt(dist.division))), mai=c(0.8,0.8,0.5,0.3))
    pi <- acos(-1)
@@ -3406,13 +2999,9 @@ BPirplotc2d<-function(maxprobab=0.05, tbl=NULL){
 }
 
 
-#関数pirhist4
+#pirhist4
 co$pirhist4<-'
 pirhist4(time.division=12, distance=c(0,maxdist), tracks=1:track.n)
-pirhist3とちがい、距離を固定して0-maxTの時間をtime.division分割。
-BPirStartt：ピルエット開始時のBearingを列記したもの
-BRunt：ラン全体のBearingを列記したもの（いずれもリスト）
-が作成される。
 '
 pirhist4 <- function(time.division=12, distance=c(0,maxdist), tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3440,10 +3029,9 @@ pirhist4 <- function(time.division=12, distance=c(0,maxdist), tracks=1:track.n, 
 }
 
 
-#関数BPirplot2
+#BPirplot2
 co$BPirplot2<-'
-BPirplot2(maxprobab=0.05): ピルエットグラフを時間別に表示。pirhist4の出力用。
-縦軸の最大値はmaxprobabで指定。
+BPirplot2(maxprobab=0.05)
 '
 BPirplot2<-function(maxprobab=0.05, tbl=NULL){
   if(!is.null(tbl)){
@@ -3451,7 +3039,7 @@ BPirplot2<-function(maxprobab=0.05, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("BPirStartt") || !exists("BRunt")){cat("BPirStartt, BRuntがありません。まずpirhist4を実行してください。");return()}
+   if(!exists("BPirStartt") || !exists("BRunt")){cat("No BPirStartt, BRunt found. Execute pirhist4\n");return()}
    time.division=length(BPirStartt)
    par(mfrow=c(3,4), mai=c(0.6,0.6,0.3,0.1))
    title<-c()
@@ -3470,12 +3058,9 @@ BPirplot2<-function(maxprobab=0.05, tbl=NULL){
 }
 
 
-#関数BPirplotc2t
+#BPirplotc2t
 co$BPirplotc2t<-'
 BPirplotc2t(maxprobab=0.05)
-pirhist4で作成したBPirStartt[[time.division]]とBRunt[[time.division]]をもとに
-cos(Bearing)を横軸とした図を時間別に描く。
-縦軸の最大値はmaxprobabで指定。
 '
 BPirplotc2t<-function(maxprobab=0.05, tbl=NULL){
   if(!is.null(tbl)){
@@ -3483,7 +3068,7 @@ BPirplotc2t<-function(maxprobab=0.05, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("BPirStartt") || !exists("BRunt")){cat("BPirStartt, BRuntがありません。まずpirhist4を実行してください。");return()}
+   if(!exists("BPirStartt") || !exists("BRunt")){cat("No BPirStartt, BRunt found. Execute pirhist4\n");return()}
    time.division <- length(BPirStartt)
    par(mfrow=c(ceiling(sqrt(time.division)),ceiling(sqrt(time.division))), mai=c(0.6,0.6,0.3,0.1))
    pi <- acos(-1)
@@ -3509,14 +3094,9 @@ BPirplotc2t<-function(maxprobab=0.05, tbl=NULL){
 }
 
 
-#関数pirhist5
+#pirhist5
 co$pirhist5<-'
 pirhist5(time.division=12, dist.division=4, bear.division=12, tracks=1:track.n)
-pirhist～pirhist4とちがい、時間、距離、Bearingで3次元に分割した各範囲における度数を計算。
-Pircount：ピルエット開始回数
-Runcount：ランに属するタイムポイントの総数
-いずれも3次元配列。
-配列の引数は順に時間、距離、Bearingの区画番号。
 '
 pirhist5 <- function(time.division=12, dist.division=4, bear.division=12, tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -3560,12 +3140,9 @@ pirhist5 <- function(time.division=12, dist.division=4, bear.division=12, tracks
 }
 
 
-#関数BPirplot3
+#BPirplot3
 co$BPirplot3<-'
 BPirplot3(maxprobab=0.05, mincount=50)
-ピルエットグラフを距離別に表示。pirhist5の出力用。
-縦軸の最大値はmaxprobabで指定。
-すべての点においてデータポイント数がmincount以上の場合だけグラフの線が引かれる。
 '
 BPirplot3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
   if(!is.null(tbl)){
@@ -3573,7 +3150,7 @@ BPirplot3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("Pircount")||!exists("Runcount")){cat("Pircount, Runcountがありません。pirhist5を実行してください。");return()}
+   if(!exists("Pircount")||!exists("Runcount")){cat("No Execute Pircount, Runcount found. Execute pirhist5");return()}
    time.division <- dim(Runcount)[1]
    dist.division <- dim(Runcount)[2]
    bear.division <- dim(Runcount)[3]
@@ -3595,22 +3172,9 @@ BPirplot3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
 }
 
 
-#関数pirhistc5
+#pirhistc5
 co$pirhistc5<-'
 pirhistc5(time.division=12, dist.division=4, cbear.division=10, tracks=1:track.n, plates=1:plate.n, type="all")
-"c"がつくとBearingのcosineで計算する点が違う。
-時間、距離、cos(Bearing)で分割した各範囲における度数を計算。
-type="all": 
-全データ一括処理。3次元配列Pircountc, Runcountcを計算。
-Pircountc：ピルエット開始回数
-Runcountc：ランに属するタイムポイントの総数
-配列の引数は順に時間、距離、cos(Bearing) の区画番号。
-
-type="plate":プレートごとのデータ。度数を4次元配列Pircountcp, Runcountcpを計算。
-全データ一括処理。3次元配列Pircountc, Runcountcを計算。
-Pircountcp：ピルエット開始回数
-Runcountcp：ランに属するタイムポイントの総数
-配列の引数は順に時間、距離、cos(Bearing) の区画番号、プレート番号。
 '
 pirhistc5 <- function(time.division=12, dist.division=4, cbear.division=10, tracks=1:track.n, plates=1:plate.n, type="all", tbl=NULL){
   if(!is.null(tbl)){
@@ -3669,14 +3233,9 @@ pirhistc5 <- function(time.division=12, dist.division=4, cbear.division=10, trac
 }
 
 
-#関数BPirplotc3
+#BPirplotc3
 co$BPirplotc3<-'
 BPirplotc3(maxprobab=0.05, mincount=50)
-pirhistc5で作成されたPircountc, Runcountcをもとに、
-横軸をcos(Bearing)、縦軸をピルエット頻度としたグラフを時間別に描く。
-一つのグラフ中に距離別のラインが異なるシンボルで書かれる。
-縦軸の最大値はmaxprobabで指定。
-すべての点においてデータポイント数がmincount以上の場合だけグラフの線が引かれる。
 '
 BPirplotc3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
   if(!is.null(tbl)){
@@ -3684,7 +3243,7 @@ BPirplotc3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("Pircountc")||!exists("Runcountc")){cat('Pircountc, Runcountcがありません。まずpirhistc5()を実行してください。');return()}
+   if(!exists("Pircountc")||!exists("Runcountc")){cat('No Pircountc, Runcountc found. Execute pirhistc5()\n');return()}
    time.division <- dim(Runcountc)[1]
    dist.division <- dim(Runcountc)[2]
    cbear.division <- dim(Runcountc)[3]
@@ -3706,12 +3265,9 @@ BPirplotc3<-function(maxprobab=0.05, mincount=50, tbl=NULL){
 }
 
 
-#関数BPirplotc3p
+#BPirplotc3p
 co$BPirplotc3p<-'
 BPirplotc3p(maxprobab=0.05)
-pirhistc5で作成されたPircountcp, Runcountcpをもとに、
-横軸をcos(Bearing)、縦軸をピルエット頻度(エラーバーつき)としたグラフを時間別に描く。
-距離ごとに異なるシンボルの線が引かれる。
 '
 BPirplotc3p<-function(maxprobab=0.05, tbl=NULL){
   if(!is.null(tbl)){
@@ -3719,13 +3275,13 @@ BPirplotc3p<-function(maxprobab=0.05, tbl=NULL){
     eval(parse(text=paste(svalue(tbl[i,1]),"<-" ,svalue(tbl[i,2]))))
   }
   }
-   if(!exists("Pircountcp")||!exists("Runcountcp")){cat('Pircountcp, Runcountcpがありません。まずpirhistc5(type="plates")を実行してください。\n');return()}
+   if(!exists("Pircountcp")||!exists("Runcountcp")){cat('No Pircountcp, Runcountcp found. Execute pirhistc5(type="plates")\n');return()}
    time.division <- dim(Runcountcp)[1]
    dist.division <- dim(Runcountcp)[2]
    cbear.division <- dim(Runcountcp)[3]
    par(mfrow=c(ceiling(sqrt(time.division)),ceiling(sqrt(time.division))), mai=c(0.6,0.6,0.3,0.1))
    title<-c()
-   PdivR <- array(NA, c(cbear.division, dist.division, plate.n))  #PdivR(PircountcpをRuncountcpで割ることでPirouetteProbabilityを計算),Mean,Sdを新たに設定するためにarrayで定義した。
+   PdivR <- array(NA, c(cbear.division, dist.division, plate.n))
    Mean <- array(NA, c(cbear.division, dist.division))
    Sd <- array(NA, c(cbear.division, dist.division))
    for(time.i in 1:time.division) title<-c(title, paste(maxT/time.division*(time.i-1),"s-",maxT/time.division*time.i,"s",sep=""))
@@ -3733,7 +3289,7 @@ BPirplotc3p<-function(maxprobab=0.05, tbl=NULL){
    for(time.i in 1:time.division)
    {
      for(dist.i in 1:dist.division){
-		for(cbear.i in 1:cbear.division){    #cosBearing(cbear)のdivisionごとにループをまわし、PdivR(PirouetteProbability)のMean（平均）,Sd（誤差）をプレートごとに計算する。
+		for(cbear.i in 1:cbear.division){
                PdivR[cbear.i, dist.i, ] <- Pircountcp[time.i, dist.i, cbear.i, ]/Runcountcp[time.i, dist.i, cbear.i, ]	
 		       Mean[cbear.i, dist.i] <- mean(PdivR[cbear.i, dist.i, ])
                Sd[cbear.i, dist.i] <- sd(PdivR[cbear.i, dist.i,  ])
@@ -3745,33 +3301,16 @@ BPirplotc3p<-function(maxprobab=0.05, tbl=NULL){
        for(dist.i in 1:dist.division)
        {
          points(cbear.mid, Mean[,dist.i], type="b", pch=dist.i)
-            arrows(cbear.mid, Mean[,dist.i],cbear.mid, Mean[,dist.i]+Sd[,dist.i], length=0)    #エラーバーを書くためにPirouetteProbabilityの点から上と下それぞれにSdの値だけ線を引く。
+            arrows(cbear.mid, Mean[,dist.i],cbear.mid, Mean[,dist.i]+Sd[,dist.i], length=0)
             arrows(cbear.mid, Mean[,dist.i],cbear.mid, Mean[,dist.i]-Sd[,dist.i], length=0)
        }
    }
    par(mfrow=c(1,1), mai=c(1,1,1,1))
 }
 
-#関数calc.PirIndex
+#calc.PirIndex
 co$calc.PirIndex<-'
 calc.PirIndex(plates=1:plate.n, type="all", chart="pirindex"))
-type="all"/"plate"
-type="all"の場合
-pirhistc5により計算されたPircountc[time.i, dist.i, cbear.i]とRuncountc[time.i, dist.i, cbear.i]の値をもとに、
-cos(Bearing)とピルエット頻度の関係を直線近似し、傾きの負数をPirIndex[time.i, dist.i]、切片をBasalPir[time.i, dist.i]
-として計算。
-最後にPirIndexを円の大きさのグラフで表示。
-type="all"のときはchart引数は意味を持たない。
-
-type="plate"の場合
-pirhistc5により計算されたPircountcp[time.i, dist.i, cbear.i, plate.i]とRuncountcp[time.i, dist.i, cbear.i, plate.i]の値をもとに、
-PirIndexp[time.i, dist.i, plate.i]、切片をBasalPirp[time.i, dist.i, plate.i]をプレートごとに計算。
-さらにプレートごとの平均、標準偏差、T検定による危険率を
-PirIndexMean, PirIndexSd, PirIndexT, BasalPirMean, BasalPirSd, BasalPirTとして計算。
-chart="pirindex"の場合
-最後にPirIndexTが0.05以上のものについてPirIndexMeanを円の大きさのグラフで表示。
-chart="basalpir"の場合
-BasalPirTが0.05以上のものについてBasalPirMeanを円の大きさのグラフで表示。
 '
 calc.PirIndex<-function(plates=1:plate.n, type="all", chart="pirindex", tbl=NULL){
   if(!is.null(tbl)){
@@ -3781,7 +3320,7 @@ calc.PirIndex<-function(plates=1:plate.n, type="all", chart="pirindex", tbl=NULL
   }
  if(type=="all")
  {
-  if(!exists("Pircountc")||!exists("Runcountc")){cat('Pircountc, Runcountcがありません。まずpirhistc5(type="all")を実行してください\n');return()}
+  if(!exists("Pircountc")||!exists("Runcountc")){cat('No Pircountc, Runcountc found. Execute pirhistc5(type="all")\n');return()}
   time.division <- dim(Runcountc)[1]
   dist.division <- dim(Runcountc)[2]
   cbear.division <- dim(Runcountc)[3]
@@ -3825,7 +3364,7 @@ calc.PirIndex<-function(plates=1:plate.n, type="all", chart="pirindex", tbl=NULL
  }
  if(type=="plate")
  {
-  if(!exists("Pircountcp")||!exists("Runcountcp")){cat('Pircountcp, Runcountcpがありません。まずpirhistc5(type="plate")を実行してください\n');return()}
+  if(!exists("Pircountcp")||!exists("Runcountcp")){cat('No Pircountcp, Runcountcpfound. Execute pirhistc5(type="plate")\n');return()}
   time.division <- dim(Runcountcp)[1]
   dist.division <- dim(Runcountcp)[2]
   cbear.division <- dim(Runcountcp)[3]
@@ -3839,13 +3378,13 @@ calc.PirIndex<-function(plates=1:plate.n, type="all", chart="pirindex", tbl=NULL
   for(dist.i in 1:dist.division)
   {
     y <- Pircountcp[time.i, dist.i,,plate.i]/Runcountcp[time.i, dist.i,,plate.i]
-    a <- var(x,y,na.rm=T)/var(x[!is.na(y)]) #回帰直線の傾きを求める
+    a <- var(x,y,na.rm=T)/var(x[!is.na(y)])
     PirIndexp[time.i, dist.i, plate.i] <<- -a
     BasalPirp[time.i, dist.i, plate.i] <<- mean(y,na.rm=T)+a*mean(x[!is.na(y)])
   }
   }
   }
-  PirIndexMean <<- apply(array(PirIndexp[,,plates],c(dim(PirIndexp)[1],dim(PirIndexp)[2],length(plates))), c(1,2), mean, na.rm=T) #130911改変：長さが1だとそのディメンションがなくなってしまうことを防ぐため。
+  PirIndexMean <<- apply(array(PirIndexp[,,plates],c(dim(PirIndexp)[1],dim(PirIndexp)[2],length(plates))), c(1,2), mean, na.rm=T)
   PirIndexSd <<- apply(array(PirIndexp[,,plates],c(dim(PirIndexp)[1],dim(PirIndexp)[2],length(plates))), c(1,2), sd, na.rm=T)
   PirIndexT <<- apply(array(PirIndexp[,,plates],c(dim(PirIndexp)[1],dim(PirIndexp)[2],length(plates))), c(1,2), function(x) if (length(which(!is.na(x)))>1) t.test(x)$p.value else NA)
   BasalPirMean <<- apply(array(BasalPirp[,,plates],c(dim(BasalPirp)[1],dim(BasalPirp)[2],length(plates))), c(1,2), mean, na.rm=T)
@@ -3911,19 +3450,13 @@ calc.PirIndex<-function(plates=1:plate.n, type="all", chart="pirindex", tbl=NULL
  write.table(as.data.frame(BasalPirMean),file="BasalPirMean.txt")
  write.table(as.data.frame(BasalPirSd),file="BasalPirSd.txt")
  write.table(as.data.frame(BasalPirT),file="BasalPirT.txt")
- } #if(type=="plate")ここまで
+ }
 }
 
 
-#関数draw.PirIndex
+#draw.PirIndex
 co$draw.PirIndex<-'
 draw.PirIndex(tracks=1:track.n, type="all", chart="pirindex"))
-calc.PirIndexにより計算されたPirIndex, PirIndexMean, BasalPirMeanの値をもとに図を描く。
-calc.PirIndexの後半の機能とほぼ同じ。
-type="all"の場合、PirIndexを円の大きさのグラフで表示。
-type="plate"の場合、
-chart="pirindex"の場合PirIndexMeanを円の大きさのグラフで表示。
-chart="basalpir"の場合BasalPirMeanを円の大きさのグラフで表示。
 '
 draw.PirIndex<-function(tracks=1:track.n, plates=1:plate.n, type="all", chart="pirindex", tbl=NULL){
   if(!is.null(tbl)){
@@ -4017,16 +3550,13 @@ draw.PirIndex<-function(tracks=1:track.n, plates=1:plate.n, type="all", chart="p
      }
    }
    }
- } #if(type=="plate")ここまで
+ }
  
 }
 
-#関数plot.PirdCdT
+#plot.PirdCdT
 co$plot.PirdCdT<-'
 plot.PirdCdT(from=-0.1, to=0.1, by=0.02, Cfrom=NA, Cto=NA, ylim=NA)
-横軸にdCdT、縦軸にピルエット頻度をとったグラフを描く。
-引き数としてdCdTの範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
 '
 plot.PirdCdT <- function(from=-0.1, to=0.1, by=0.02, Cfrom=NA, Cto=NA, ylim=NA, tbl=NULL){
   if(!is.null(tbl)){
@@ -4042,7 +3572,7 @@ plot.PirdCdT <- function(from=-0.1, to=0.1, by=0.02, Cfrom=NA, Cto=NA, ylim=NA, 
   plot(seq(from+by/2,to-by/2,by), plot.PirdCdT.func1(from,to,by,i,Cfrom,Cto), type="b", xlim=c(from,to), xlab="dC/dT (mM/sec)", ylab="Piruette probability", ylim=ylim, main=main)
   }
 }
-#関数plot.PirdCdT用の関数
+#For plot.PirdCdT
 plot.PirdCdT.func1<-function(from,to,by,i,Cfrom,Cto){
   unlistdCdT <- unlist(dCdT)
   if(is.na(Cfrom) && is.na(Cto)){
@@ -4071,13 +3601,9 @@ plot.PirdCdT.func1<-function(from,to,by,i,Cfrom,Cto){
   }
 }
 
-#関数plot.PirdCdTMulti
+#plot.PirdCdTMulti
 co$plot.PirdCdTMulti<-'
 plot.PirdCdTMulti(from=-0.1, to=0.1, by=0.02, Cfrom, Cto, Cstep, ylim=NA)
-横軸にdCdT、縦軸にピルエット頻度をとったグラフを描く。
-ただし、C（濃度）の範囲ごとに分けた一連のグラフを描く。
-引き数としてdCdTの範囲と刻み、Cの範囲と幅を指定する。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
 '
 plot.PirdCdTMulti<-function(from=-0.1, to=0.1, by=0.02, Cfrom, Cto, Cstep, ylim=NA, tbl=NULL){
   if(!is.null(tbl)){
@@ -4094,16 +3620,10 @@ plot.PirdCdTMulti<-function(from=-0.1, to=0.1, by=0.02, Cfrom, Cto, Cstep, ylim=
   par(mfrow=c(1,1))
 }
 
-#関数plot.PirCdCdT
+#plot.PirCdCdT
 co$plot.PirCdCdT<-'
 plot.PirCdCdT(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, 
 persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n, legend = TRUE)
-横軸にC、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。TfromとTtoの時間範囲のみ計算。
-引き数としてC（x）およびdCdT（y）の範囲と刻みを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabCdCdT=total/pir/maxprobabを作成。
 '
 plot.PirCdCdT <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, 
                  maxprobab=0.1, cutoff=20, persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n, legend = TRUE, tbl=NULL){
@@ -4171,19 +3691,10 @@ plot.PirCdCdT <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0
 }
 
 
-#関数calc.PirCdCdT
+#calc.PirCdCdT
 co$calc.PirCdCdT<-'
 calc.PirCdCdT(Cfrom=20, Cto=100, yfrom=-0.6, yto=0.6, yby=0.025, 
 Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="")
-横軸にdCdTをとり、ピルエット頻度を数字で返す。TfromとTtoの時間範囲、CfromとCtoの濃度範囲のデータのみ計算。
-引き数としてdCdT（y）の範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各プレートに分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、を作成。
-count=データ総数
-out <- calc.PirCdCd(.....)として
-out$total, out$pir, out$countで取得。
-fileoutにファイル名を指定すると、その名前のあとに
-"_total.csv", "_pir.csv", "_count.csv"のついたファイルにそれぞれの数値を出力。
 '
 calc.PirCdCdT <- function(Cfrom=20, Cto=100, yfrom=-0.6, yto=0.6, yby=0.025, 
                  Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="", tbl=NULL){
@@ -4235,20 +3746,10 @@ calc.PirCdCdT <- function(Cfrom=20, Cto=100, yfrom=-0.6, yto=0.6, yby=0.025,
 }
 
 
-#関数calc.PirCdCdl
+#calc.PirCdCdl
 co$calc.PirCdCdl<-'
 calc.PirCdCdl(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
 Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="")
-横軸にdCdlをとり、ピルエット頻度を数字で返す。TfromとTtoの時間範囲、CfromとCtoの濃度範囲のデータのみ計算。
-引き数としてdCdl（y）の範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各プレートに分けた行列として以下の数値を作成。
-count：総タイムポイント数、total：総時間　(いずれも対象範囲のみ＝ピルエット以外のすべての点＋ピルエットの最初の点)
-pir：その間に起こったピルエットの回数。
-out <- calc.PirCdCdl(.....)として
-out$total, out$pir, out$countで取得。
-fileoutにファイル名を指定すると、その名前のあとに"_total.csv", "_pir.csv", "_count.csv"の
-ついたファイルにそれぞれの数値を出力。
 '
 calc.PirCdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
                  Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="", tbl=NULL){
@@ -4301,20 +3802,10 @@ calc.PirCdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5,
 }
 
 
-#関数calc.TurnCdCdl
+#calc.TurnCdCdl
 co$calc.TurnCdCdl<-'
 calc.TurnCdCdl(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
 Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="")
-横軸にdCdlをとり、シャープターン頻度をturnに数字で返す。TfromとTtoの時間範囲、CfromとCtoの濃度範囲のデータのみ計算。
-引き数としてdCdl（y）の範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が、findPirでTurnRunが計算されていることが必要。
-各プレートに分けた行列として以下の数値を作成。
-count：総タイムポイント数、total：総時間　(いずれも対象範囲のみ＝ターン以外のすべての点＋ターンの最初の点)
-turn：その間に起こったターンの回数。
-out <- calc.TurnCdCdl(.....)として
-out$total, out$turn, out$countで取得。
-fileoutにファイル名を指定すると、その名前のあとに"_total.csv", "_turn.csv", "_count.csv"の
-ついたファイルにそれぞれの数値を出力。
 '
 calc.TurnCdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
                  Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="", tbl=NULL){
@@ -4367,20 +3858,10 @@ calc.TurnCdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5,
 }
 
 
-#関数calc.PirACdCdl
+#calc.PirACdCdl
 co$calc.PirACdCdl<-'
 calc.PirACdCdl(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
 Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="")
-横軸にdCdlをとり、ピルエット頻度PirAを数字で返す。TfromとTtoの時間範囲、CfromとCtoの濃度範囲のデータのみ計算。
-引き数としてdCdl（y）の範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が、findPirAとcalc.PirRunAでPirRunA, PirStartAが計算されていることが必要。
-各プレートに分けた行列として以下の数値を作成。
-count：総タイムポイント数、total：総時間　(いずれも対象範囲のみ＝ピルエットA以外のすべての点＋ピルエットAの最初の点)
-pir：その間に起こったピルエットAの回数。
-out <- calc.PirACdCdl(.....)として
-out$total, out$pir, out$countで取得。
-fileoutにファイル名を指定すると、その名前のあとに"_total.csv", "_pir.csv", "_count.csv"の
-ついたファイルにそれぞれの数値を出力。
 '
 calc.PirACdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
                  Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="", tbl=NULL){
@@ -4433,20 +3914,10 @@ calc.PirACdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5,
 }
 
 
-#関数calc.TurnACdCdl
+#calc.TurnACdCdl
 co$calc.TurnACdCdl<-'
 calc.TurnACdCdl(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
 Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="")
-横軸にdCdlをとり、シャープターン頻度(TurnA)をturnに数字で返す。TfromとTtoの時間範囲、CfromとCtoの濃度範囲のデータのみ計算。
-引き数としてdCdl（y）の範囲と刻みを指定する。
-calc.Cまたはcalc.C2で濃度が、findPirAでTurnRunAが計算されていることが必要。
-各プレートに分けた行列として以下の数値を作成。
-count：総タイムポイント数、total：総時間　(いずれも対象範囲のみ＝ターンA以外のすべての点＋ターンAの最初の点)
-turn：その間に起こったターンAの回数。
-out <- calc.TurnACdCdl(.....)として
-out$total, out$turn, out$countで取得。
-fileoutにファイル名を指定すると、その名前のあとに"_total.csv", "_turn.csv", "_count.csv"の
-ついたファイルにそれぞれの数値を出力。
 '
 calc.TurnACdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5, 
                  Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, fileout="", tbl=NULL){
@@ -4499,12 +3970,9 @@ calc.TurnACdCdl <- function(Cfrom=20, Cto=100, yfrom=-2, yto=2, yby=0.5,
 }
 
 
-#関数calc.TRCdCdLat
+#calc.TRCdCdLat
 co$calc.TRCdCdLat<-'
 calc.TRCdCdLat(Cfrom=20, Cto=100, yfrom=-3, yto=3, yby=0.2, Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T)
-横軸にdCdTをとり、Turning Rateを計算する。時間範囲Tfrom～Ttoのみのデータを使用。
-引き数としてdCdLat（y）の範囲と刻みを指定する。
-結果のデータとしてTRcount, TRsumを出力する。out$TRcount, out$TRsumとして得る。
 '
 calc.TRCdCdLat <- function(Cfrom=20, Cto=100, yfrom=-3, yto=3, yby=0.2, 
                   Tfrom=0, Tto=maxT, tracks=1:track.n, plate=T, tbl=NULL){
@@ -4538,13 +4006,10 @@ list(TRcount=TRcount, TRsum=TRsum)
 
 
 
-#関数plot.PirCdCdTMulti
+#plot.PirCdCdTMulti
 co$plot.PirCdCdTMulti<-'
 plot.PirCdCdTMulti(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, 
 persp=FALSE, Tfrom=0, Tto=maxT, Tspan=600, saveplot=TRUE, tracks=1:track.n)
-時間範囲を変えつつ一連のplot.PirCdCdTを行う。
-設定パラメータはplot.PirCdCdT参照。加えて各時間帯の時間範囲（Tspan）を設定。
-probabCdCdTT[Ci, dCdTi, Ti]、probabCdCdTT.mean[Ti]を作成。
 '
 plot.PirCdCdTMulti <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, 
                  maxprobab=0.1, cutoff=20, persp=FALSE, Tfrom=0, Tto=maxT, Tspan=600, saveplot=TRUE, tracks=1:track.n, tbl=NULL){
@@ -4570,12 +4035,10 @@ plot.PirCdCdTMulti <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, 
   }
 }
 
-#関数clip.probabCdCdTT
+#clip.probabCdCdTT
 co$clip.probabCdCdTT<-'
 clip.probabCdCdTT(title, replace=NA, xfrom=NA, xto=NA, yfrom=NA, yto=NA, Tfrom=NA, Tto=NA
                    maxprobab=0.1, cutoff=20, Tfrom=0, saveplot=TRUE)
-ピルエット機構のパラメータのT=Tfrom-Tto, C=xfrom-xto, dCdT=yfrom=ytoの範囲をreplaceの値で置き換える。
-plot.CdCdTと同様の図を描画しsaveplotがTrueであればtitleを幹とする名前で保存する。
 '
 clip.probabCdCdTT<-function(title, replace=NA, xfrom=NA, xto=NA, yfrom=NA, yto=NA, Tfrom=NA, Tto=NA,
                    maxprobab=0.1, cutoff=20, Tspan=600, saveplot=TRUE, tbl=NULL){
@@ -4640,15 +4103,9 @@ clip.probabCdCdTT<-function(title, replace=NA, xfrom=NA, xto=NA, yfrom=NA, yto=N
 }
 
 
-#関数plot.PirTdCdT
+#plot.PirTdCdT
 co$plot.PirTdCdT<-'
 plot.PirTdCdT(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)
-横軸にT、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。
-引き数としてT（x）およびdCdT（y）の範囲と刻みを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabTdCdT=total/pir/maxprobabを作成。
 '
 plot.PirTdCdT <- function(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE, tbl=NULL){
   if(!is.null(tbl)){
@@ -4710,16 +4167,10 @@ plot.PirTdCdT <- function(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.02
   par(mfrow=c(1,1))
 }
 
-#関数plot.PirTC
+#plot.PirTC
 co$plot.PirTC<-'
 plot.PirTC(xfrom=0, xto=NA, xby=NA, yfrom=30, yto=100, yby=2.5, dCdTfrom=-0.6, 
      dCdTto=0.6, maxprobab=0.1, cutoff=20, persp=FALSE, tracks=1:track.n)
-定められたdCdTの範囲について横軸にT、縦軸にCをとり、ピルエット頻度をカラー表示したグラフを描く。
-引き数としてT（x）およびC（y）の範囲と刻み、dCdTの範囲dCdTfrom-dCdTtoを指定する。
-ピルエット頻度0～maxprobabの範囲をカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotal=Runのタイムポイントの総数、pir=ピルエット回数、probabTC=total/pir/maxprobabを作成。
 '
 plot.PirTC <- function(xfrom=0, xto=NA, xby=NA, yfrom=30, yto=100, yby=2.5, dCdTfrom=-0.6, dCdTto=0.6, maxprobab=0.1, cutoff=20, persp=FALSE, tracks=1:track.n, tbl=NULL){
   if(!is.null(tbl)){
@@ -4783,13 +4234,10 @@ plot.PirTC <- function(xfrom=0, xto=NA, xby=NA, yfrom=30, yto=100, yby=2.5, dCdT
   par(mfrow=c(1,1))
 }
 
-#関数calc.PirCIndex
+#calc.PirCIndex
 co$calc.PirCIndex<-'
 calc.PirCIndex(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, 
 maxprobab=0.1, cutoff=20, , persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n)
-まずplot.PirdCdTと同じ計算を行う。
-次に、濃度ランクごとにdCdT×probabilityの関係について重み付き直線回帰を行う。
-結果をベクトルBasalPir, PirIndexに出力。
 '
 calc.PirCIndex <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=0.025, 
                  maxprobab=0.1, cutoff=20, persp=FALSE, Tfrom=0, Tto=maxT, tracks=1:track.n, tbl=NULL){
@@ -4843,16 +4291,9 @@ calc.PirCIndex <- function(xfrom=30, xto=100, xby=2.5, yfrom=-0.6, yto=0.6, yby=
 }
 
 
-#関数plot.BPirTC
+#plot.BPirTC
 co$plot.BPirTC<-'
 plot.BPirTC(Tfrom=0, Tto=2000, Tby=180, Cfrom=20, Cto=100, Cby=2.5, maxdCdT=0.02, maxprobab=0.05, cutoff=50)
-横軸にT、縦軸にCをとり、Basalピルエット頻度をカラー表示したグラフを描く。
-引き数としてT（x）およびC（y）の範囲と刻みを指定する。
-dCdTの絶対値がmaxdCdT以下の時だけカウントしたピルエット頻度を0～maxprobabの範囲でカラーコードする。
-区画の中でのRunのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-calc.Cまたはcalc.C2で濃度が計算されていることが必要。
-各区画に分けた行列としてtotalTC[T rank, C rank]=Runのタイムポイントの総数、pirTC[T rank, C rank]=ピルエット回数、
-BPirTC[T rank, C rank]=totalTC/pirTC、BPirT[T rank]を作成。
 '
 plot.BPirTC <- function(Tfrom=0, Tto=2000, Tby=180, Cfrom=20, Cto=100, Cby=2.5, maxdCdT=0.02, maxprobab=0.05, cutoff=50, tbl=NULL){
   if(!is.null(tbl)){
@@ -4906,11 +4347,9 @@ plot.BPirTC <- function(Tfrom=0, Tto=2000, Tby=180, Cfrom=20, Cto=100, Cby=2.5, 
   legend(Tto, Cto-(Cto-Cfrom)/20, c(maxprobab,rep("",18),0), xjust=1, x.intersp=0.5, fill=20:1, bty="n",y.intersp=0.5,border=20:1,cex=cx)
 }
 
-#関数plot.TRdCdLat
+#plot.TRdCdLat
 co$plot.TRdCdLat<-'
 plot.TRdCdLat(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA)
-横軸にdCdLat、縦軸にTurnRateをとったグラフを描く。
-引き数としてdCdLatの範囲と刻みを指定する。
 '
 plot.TRdCdLat <- function(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA, tbl=NULL){
   if(!is.null(tbl)){
@@ -4929,7 +4368,7 @@ plot.TRdCdLat <- function(from=-3, to=3, by=0.5, Cfrom=NA, Cto=NA, ylim=NA, tbl=
   , xlab="dCdLat (mM/mm)", ylab="Curving Rate (deg/mm)",type="b", pch=16, font.lab=2, ylim=ylim, main=main)
   }
 }
-#関数plot.TRdCdLat用の関数
+#plot.TRdCdLat用の
 plot.TRdCdLat.func1<-function(from,to,by,i,Cfrom,Cto){
   if(is.na(Cfrom) && is.na(Cto)){
   mean(unlist(TurnRate)[ceiling((unlist(dCdLat)-from)/by)==i],na.rm=T)
@@ -4945,12 +4384,9 @@ plot.TRdCdLat.func1<-function(from,to,by,i,Cfrom,Cto){
   }
 }
 
-#関数plot.TRdCdLatMulti
+#plot.TRdCdLatMulti
 co$plot.TRdCdLatMulti<-'
 plot.TRdCdLatMulti(from=-3, to=3, by=0.5, Cfrom, Cto, Cstep, ylim=NA)
-横軸にdCdLat、縦軸にTurnRateをとったグラフを描く。
-ただし、C（濃度）の範囲ごとに分けた一連のグラフを描く。
-引き数としてdCdLatの範囲と刻み、Cの範囲と幅を指定する。
 '
 plot.TRdCdLatMulti<-function(from=-3, to=3, by=0.5, Cfrom, Cto, Cstep, ylim=NA, tbl=NULL){
   if(!is.null(tbl)){
@@ -4968,14 +4404,9 @@ plot.TRdCdLatMulti<-function(from=-3, to=3, by=0.5, Cfrom, Cto, Cstep, ylim=NA, 
 }
 
 
-#関数plot.TRCdCdLat
+#plot.TRCdCdLat
 co$plot.TRCdCdLat<-'
 plot.TRCdCdLat(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, tracks=1:track.n, legend=TRUE, legend = "Y")
-横軸にC、縦軸にdCdTをとり、ピルエット頻度をカラー表示したグラフを描く。時間範囲Tfrom～Ttoのみのデータを使用。
-引き数としてC（x）およびdCdLat（y）の範囲と刻みを指定する。
-Turning Rate minTR～maxTRの範囲をカラーコードする。
-区画のタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-結果のデータとしてTRCdCdLを出力する。TRCdCdL.xfrom, TRCdCdL.xto, TRCdCdL.xby, TRCdCdL.mean等が付随。
 '
 plot.TRCdCdLat <- function(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, 
                   minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, tracks=1:track.n, legend=TRUE, tbl=NULL){
@@ -5027,13 +4458,10 @@ plot.TRCdCdLat <- function(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2,
   #par(mfrow=c(1,1))
 }
 
-#関数plot.TRCdCdLatMulti
+#plot.TRCdCdLatMulti
 co$plot.TRCdCdLatMulti<-'
 plot.TRCdCdLatMulti(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, 
                   minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, Tspan=600, saveplot=TRUE, tracks=1:track.n)
-時間範囲を変えつつ一連のplot.TRCdCdLatを行う。
-設定パラメータはplot.TRCdCdLat参照。加えて各時間帯の時間範囲（Tspan）を設定。
-TRCdCdLT[Ci, dCdTi, Ti]、TRCdCdLT.mean[Ti]を作成。
 '
 plot.TRCdCdLatMulti <- function(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby=0.2, 
                   minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, Tspan=600, saveplot=TRUE, tracks=1:track.n, tbl=NULL){
@@ -5059,7 +4487,7 @@ plot.TRCdCdLatMulti <- function(xfrom=30, xto=100, xby=2.5, yfrom=-3, yto=3, yby
   }
 }
 
-#関数clip.TRCdCdLT
+#clip.TRCdCdLT
 co$clip.TRCdCdLT<-'
 clip.TRCdCdLT(title, replace=NA, xfrom=NA, xto=NA, yfrom=NA, yto=NA, Tfrom=NA, Tto=NA
                    minTR=-20, maxTR=20, cutoff=5, saveplot=TRUE)
@@ -5122,13 +4550,9 @@ clip.TRCdCdLT<-function(title, replace=NA, xfrom=NA, xto=NA, yfrom=NA, yto=NA, T
 
 }
 
-#関数chemotaxis.index
+#chemotaxis.index
 co$chemotaxis.index<-'
 chemotaxis.index(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1:plate.n, left.low=T)
-tpointsで指定された時刻（デフォールトでは2分ごと）の前後（または前または後）1分間における各プレートのchemotaxis indexを計算し、グラフにする。
-指定された番号のプレートのデータを使用（デフォールトは全プレート）。
-プレートの向かって左側が塩濃度が低いときはleft.low=TRUE（デフォールト）。逆ならFALSEにする。
-CIの時間経過のグラフをchemotaxis.index.tiffに出力され、数値データは各タイムポイントのworm_counts_tx.csv"に虫の分布の数値が、chemotaxis.index.csvにChemotaxis indexの数値が出力される。
 '
 chemotaxis.index <- function(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1:plate.n, left.low=T,tbl=NULL){
   if(!is.null(tbl)){
@@ -5137,7 +4561,7 @@ chemotaxis.index <- function(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1
   }
   }
   if(plate_format!="kunitomo"){
-    cat('plate_formatが"kunitomo"ではありません。申し訳ありませんが現在kunitomoフォーマットにしか対応してません。\n')
+    cat('plate_format is not "kunitomo". Sorry.\n')
     return()
   }
   cat("Warning: we assume that adjust.position() has been executed.\n")
@@ -5207,14 +4631,9 @@ chemotaxis.index <- function(tpoints = seq(0,round(maxT/60)*60,by=120), plates=1
 }
 
 
-#関数plot.TRTdCdLat
+#plot.TRTdCdLat
 co$plot.TRTdCdLat<-'
 plot.TRTdCdLat(xfrom=0, xto=NA, xby=NA, yfrom=-0.6, yto=0.6, yby=0.025, maxprobab=0.1, cutoff=20, persp=FALSE)
-横軸にT、縦軸にdCdLatをとり、Curving Rateをカラー表示したグラフを描く。
-引き数としてT（x）およびdCdLat（y）の範囲と刻みを指定する。
-Curving rate minTR～maxTRの範囲をカラーコードする。
-区画の中でのタイムポイントの総数がcutoffより小さい区画は色を表示しない。
-各区画に分けた行列としてturncount=Runのタイムポイントの総数、TRTdCdL=平均Curving Rateを作成。
 '
 plot.TRTdCdLat <- function(xfrom=0, xto=NA, xby=NA, yfrom=-3, yto=3, yby=0.2, 
                   minTR=-20, maxTR=20, cutoff=5, Tfrom=0, Tto=maxT, tracks=1:track.n, persp=FALSE, tbl=NULL){
@@ -5270,7 +4689,7 @@ plot.TRTdCdLat <- function(xfrom=0, xto=NA, xby=NA, yfrom=-3, yto=3, yby=0.2,
 }
 
 
-#関数quantify.pirouette
+#quantify.pirouette
 co$quantify.pirouette<-'
 quantify.pirouette()
 '
@@ -5304,7 +4723,7 @@ quantify.pirouette<-function(){
   #hist(main="Turn duration",Turnduration, breaks=seq(0,105,15), freq=F)
 }
 
-#関数calc.CI
+#calc.CI
 co$calc.CI<-'
 calc.CI()
 '
@@ -5316,7 +4735,7 @@ calc.CI<-function(time=maxT,type="plate", tbl=NULL){
   }
   CI<<-c()
   for(plate.i in 1:plate.n){
-    ABC<-rep(0,10) #10カ所までの領域を数えられる
+    ABC<-rep(0,10)
     for(track.i in plate.track[plate.i]){
     if(plate_format=="kunitomo"){
     }
@@ -5324,13 +4743,9 @@ calc.CI<-function(time=maxT,type="plate", tbl=NULL){
   }
 }
 
-#関数migration.bias
+#migration.bias
 co$migration.bias<-'
 migration.bias()
-線虫の進行方向と濃度勾配の方向との角度のコサインを計算する。
-プラスなら、その瞬間に勾配を上っている、マイナスなら下っている。
-結果はmigbiasにリストとして作成される。
-リストの各要素の添え字は1～(point.n[track.i]-1)
 '
 migration.bias <- function(){
 	templist <- list()
@@ -5346,24 +4761,24 @@ migration.bias <- function(){
 }
 
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ #ver5.2における追加
-###☆☆☆☆☆☆☆☆                            ☆☆☆☆
-co$ooooo<-'\n☆☆☆☆     シミュレーション      ☆☆☆☆
-'##☆☆☆☆☆☆☆☆                            ☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
+#######################################################
+###################                            ########
+co$ooooo<-'\n########     Simulation      ########
+'##################                            ######
+#######################################################
 
 
-#関数backup
+#Function backup
 co$backup<-'
 backup()
-simulate()で失われるデータのバックアップを行う。
+backup lost in simulate()
 dT.back <<- dT
 dX.back <<- dX
 dY.back <<- dY
 track.n.back <<- track.n
 point.n.back <<- point.n
 maxT.back <<- maxT
-を実行。
+Executed
 '
 backup <- function(){
   dT.back <<- dT
@@ -5374,17 +4789,17 @@ backup <- function(){
   maxT.back <<- maxT
 }
 
-#関数backup.reverse
+#Function backup.reverse
 co$backup.reverse<-'
 backup.reverse()
-バックアップしたものを戻す。
+Return backup.
   dT <<- dT.back
   dX <<- dX.back
   dY <<- dY.back
   track.n <<- track.n.back
   point.n <<- point.n.back
   maxT <<- maxT.back
-を実行。
+Executed
 '
 backup.reverse <- function(){
   dT <<- dT.back
@@ -5395,28 +4810,12 @@ backup.reverse <- function(){
   maxT <<- maxT.back
 }
             
-#関数simulate
+#Function simulate
 co$simulate<-'
 simulate(repeat.n=1, type="RW"/"JN", pir=T, wv=T ,maxtime=NA, basal.pirouette=NA, 
             variable.speed=T, worm.speed=worm.speed, Tstep=0.5, initialX=50, initialY=50, initialR=10,
             plate.centerX=50, plate.centerY=50, plate.radius=40, no.asking=F, timeseries=F)
-シミュレーションを行う。
-repeat.n：試行回数
-type="RW":curving rateのランダムな変化をランダムウォークモデルで表現。
-type="JN"：curving rateのランダムな変化をIino&Yoshida論文の方法で実現。
-pir,wv：ピルエット機構、風見鶏機構を用いるかどうかを指定。
-ピルエット機構を用いない場合、ピルエット頻度はbasal.pirouetteの値（またはNAの場合平均値）になる。
-variable.speedがTでmeanVTが存在する場合はこのデータを用いて時間ごとの速度を採用。そうでない場合は一定のworm.speedが虫の速度となる。
- グローバルパラメータmeanVTもworm.speedも実データからcalc.speedで計算できる。
-Tstep: 時間間隔
-initialX: スタート位置X座標、initialY: スタート位置Y座標、initialR: スタート位置範囲半径
-plate.centerX: プレートの中心のX座標、plate.centerY: プレートの中心のY座標、plate.radius: プレート半径
-source="odor"の場合は最も近いピークの方向からWVIndexMean、PirIndexT、BasalPirTにより
-ピルエットおよびターンのバイアスを決定する。
-source="salt"の場合は塩濃度の時間変化および空間勾配からピルエットおよびターンのバイアスを決定する。
-gradient="numerical"の場合は数値データから塩濃度を決定する。これをもとに、
-ピルエット頻度はprobabCdCdT（=plot.PirCdCdTの出力）の表をもとに、
-風見鶏傾向はTRCdCdL（=plot.TRCdCdLatの出力）の表をもとに決定。
+Perform simulation.
 '
 simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirouette=NA, 
             variable.speed=T, worm.speed2=worm.speed, Tstep=0.5, initialX=50, initialY=50, initialR=10,
@@ -5425,16 +4824,16 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
   #X1<-19.46; Y1<-37.5; X2<-19.46; Y2<-62.5 # 50-sqrt(33^2-12.5^2)=19.46
   
   if(!no.asking){
-    cat("dT, dX, dY, point.n, track.n, maxT は置換されます。backup()でバックアップをとることを勧めます。このまま実行しますか？([Y]/N)")
+    cat("dT, dX, dY, point.n, track.n, maxT substituted. backup()Backup?([Y]/N)")
     input <- readLines(n=1)
     if(input!="" && input!="y" && input!="Y") return()
   }
-  if(variable.speed && exists("meanVT") && exists("meanVT.timespan")) cat("時間可変のworm.speedが使われます。\n")
-  else{cat("固定したworm.speedが使われます。\n")}
+  if(variable.speed && exists("meanVT") && exists("meanVT.timespan")) cat("worm.speed used\n")
+  else{cat("Fixed worm.speed used\n")}
   
-  if(is.na(maxtime)) {maxtime<-maxT; if(!is.numeric(maxT)) {cat("maxtimeを設定してください。\n"); return()}}
+  if(is.na(maxtime)) {maxtime<-maxT; if(!is.numeric(maxT)) {cat("maxtime need to be set\n"); return()}}
   
-  if(!exists("BdeltaTheta")){ #Bearing-ピルエット角度の関係のデータの読み込み（データを読み込む場合）
+  if(!exists("BdeltaTheta")){
     if(file.exists("bearing before pirouette delta bearing.txt")){
     tempBD <- read.table("bearing before pirouette delta bearing.txt", header=T, sep="\t")
     BdeltaTheta <<- matrix(0,12,12)
@@ -5455,15 +4854,15 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
       BdeltaTheta[i,] <<- BdeltaTheta[i,] / tempsum
     }
     }else{
-    cat("BdeltaThetaがありません。before.after()を実行するか、bearing before pirouette delta bearing.txt ファイルを準備して読み込んでください。\n")
+    cat("No BdeltaTheta. before.after()execute or bearing before pirouette delta bearing.txt prepare file\n")
     }
   }
   
   if(type == "RW")
   {
-  sigmaPsi <- 11.6 #ξの標準偏差 curving rateのSDは論文より32.3°/mm。これとalphaの値より、
+  sigmaPsi <- 11.6 #ξcurving rate SD 32.3°/mm。and alpha
   # sigma = sart(1-alpha^2)SD = 11.6
-  alpha <- 0.933^(Tstep*2)  #decay定数 0.5sで0.933。FigS2より5秒で半減より。
+  alpha <- 0.933^(Tstep*2)  #decay const  0.5s in 0.933. FigS2
   }
 
   dT <<- list()
@@ -5471,16 +4870,16 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
   dY <<- list()
   point.n <<- c()
   
-  #ここから試行繰り返す
+  #Trials
   for(repeat.i in 1:repeat.n)
   {
     T <- 0
     repeat{
-      rX<-runif(1,min=-1,max=1)  #(-1,1)の範囲の乱数
+      rX<-runif(1,min=-1,max=1)
       rY<-runif(1,min=-1,max=1)  
-      if(rX^2+rY^2<=1) break #半径1の円内ならOK
+      if(rX^2+rY^2<=1) break
     }
-    X <- rX*initialR+initialX #スタート位置
+    X <- rX*initialR+initialX #Start
     Y <- rY*initialR+initialY
     Theta <- runif(1, min=-360, max=360)
 
@@ -5496,7 +4895,7 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
     i <- 1
     while(1)
     {
-      #時間進行ループ
+      #Time proceeds
       i <- i + 1
       T <- T + Tstep
       if(T > maxtime) break
@@ -5510,11 +4909,11 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
       else if(Theta <= -180) Theta <- Theta + 360
       X <- tempX[i-1]+speed*Tstep*cos(Theta/180*pi)
       Y <- tempY[i-1]+speed*Tstep*sin(Theta/180*pi)
-      if(sqrt((X-plate.centerX)^2 + (Y-plate.centerY)^2 ) > plate.radius) break #プレートから出た場合
+      if(sqrt((X-plate.centerX)^2 + (Y-plate.centerY)^2 ) > plate.radius) break
       
-      #####Bearingの計算####
+      #####Bearing calculation####
       
-      #最も近いピークをpeakX, peakY
+      #Nearest peak peakX, peakY
       mindist2<-10000
       for(tempi in 1:length(peak.positionX)){
       tempdist2 <- dist2(X,Y,peak.positionX[tempi],peak.positionY[tempi])
@@ -5526,7 +4925,7 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
       }
       }
 
-      #ピークの方向
+      #Peak direction
       DX <- peakX-X
       DY <- peakY-Y
       peakDir <- atan(DY/DX)/pi*180
@@ -5536,8 +4935,8 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
       }
       Dist <- sqrt(DX^2+DY^2)
       
-      if(gradient=="numerical"){   #濃度に関して数値データを用いている場合は勾配からBearingを決める。
-        peakDir <- atan(get.dCdY(X,Y,T)/get.dCdX(X,Y,T))/pi*180 #dCdX=0でも正しく90度としてくれる。
+      if(gradient=="numerical"){
+        peakDir <- atan(get.dCdY(X,Y,T)/get.dCdX(X,Y,T))/pi*180
         if(get.dCdX(X,Y,T)<0 & get.dCdY(X,Y,T)>=0) peakDir<-peakDir+180
         if(get.dCdX(X,Y,T)<0 & get.dCdY(X,Y,T)<0) peakDir<-peakDir-180
       }
@@ -5565,15 +4964,15 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
         }
       }
       
-      #風見鶏機構
+      #Weathervane
       if(wv) Phi <- Psi + WVturnrate(T, X, Y, Dist, Bearing, Theta, timeseries)
       else Phi <- Psi
       
-      #ピルエット機構
+      #Pir mechanism
       if(source=="salt" && gradient=="numerical") dCdT <- (get.C(X,Y,T) - get.C(tempX[i-1],tempY[i-1],tempT[i-1]))/(T-tempT[i-1])
-      if(runif(1)[1] < Pirprobab(T, X, Y, Dist, Bearing, dCdT, timeseries, pir, basal.pirouette)*(T-tempT[i-1])) #probabは時間単位
+      if(runif(1)[1] < Pirprobab(T, X, Y, Dist, Bearing, dCdT, timeseries, pir, basal.pirouette)*(T-tempT[i-1])) #probab in time
       {
-      #ピルエットが起こった
+      #Pir occurs
         Theta <- Theta + DTheta(Bearing)
         if(Theta > 180) Theta <- Theta - 360
         else if(Theta <= -180) Theta <- Theta + 360
@@ -5584,24 +4983,22 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
       tempTheta <<- c(tempTheta, Theta)
       tempPsi <- c(tempPsi, Psi)
       tempPhi <- c(tempPhi, Phi)
-      #ここまで時間進行ループ
     }
 
     dT <<- c(dT, list(tempT))
     dX <<- c(dX, list(tempX))
     dY <<- c(dY, list(tempY))
     point.n <<- c(point.n, i-1)
-  #一試行終了
   }
   track.n <<- repeat.n
   maxT <<- maxtime
 }
 
-#simulate用の関数WVturnrate
+#For simulate, WVturnrate
   WVturnrate <- function(T, X, Y, Dist, Bearing, Theta, timeseries){
 
   if(source=="odor"){
-    if(!exists("WVIndexMean")){cat("関数WVturnrate: WVIndexMeanがありません。\n")}
+    if(!exists("WVIndexMean")){cat("No WVturnrate: WVIndexMean found\n")}
     #return(30*sin(Bearing/180*pi))
     trank <- ceiling(T/300)
     drank <- ceiling(Dist/15)
@@ -5637,12 +5034,12 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
   }
   
   }
-#simulate用の関数Pirprobab
+#For simulate, Pirprobab
   Pirprobab <- function(T, X, Y, Dist, Bearing, dCdT, timeseries, pir, basal.pirouette){
   
     if(source=="odor"){
-      if(!exists("PirIndexT")){cat("関数Pirprobab: PirIndexTがありません。\n")}
-      if(!exists("BasalPirT")){cat("関数Pirprobab: BasalPirTがありません。\n")}
+      if(!exists("PirIndexT")){cat("No Pirprobab: PirIndexT found\n")}
+      if(!exists("BasalPirT")){cat("No Pirprobab: BasalPirT found\n")}
       trank <- ceiling(T/300)
       drank <- ceiling(Dist/15)
       ##added
@@ -5655,7 +5052,7 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
         if(BasalPirT[trank, drank] > 0.05) bindex <- 0 else bindex <- BasalPirMean[trank, drank]
       }
       if(pir){return(bindex - index*cos(Bearing/180*pi))
-      }else{ return(basal.pirouette) } #お任せバージョン（basal.pirouette=NA）は未対応
+      }else{ return(basal.pirouette) }
     }
     
     if(source=="salt"){
@@ -5684,7 +5081,7 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
     }
     
   }
-#simulate用の関数DTheta   #30度刻みとしていることに注意。
+#DTheta for simulate  #30deg each
   DTheta <- function(Bearing){
     P <- runif(1)
     sumP <- 0
@@ -5694,7 +5091,7 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
         sumP <- sumP + BdeltaTheta[ceiling((Bearing+180)/30), i]
         if(sumP >= P) return(i*30-195)
       } 
-    }else{  #濃度勾配がなくnumericのときはBearingがNaNになる。
+    }else{  #No gradient and numeric then Bearing=NaN
       for(i in 1:12)
       {
         sumP <- sumP + mean(BdeltaTheta[ ,i])
@@ -5703,10 +5100,10 @@ simulate <- function(repeat.n=1, type="RW", pir=T, wv=T ,maxtime=NA, basal.pirou
     }
   }
 
-#関数routine.simulation
+#Function routine.simulation
 co$routine.simulation<-'
 routine.simulation()
-以下を実行。
+Batch execute the following
 backup()
 save.image()
 simulate(100,"RW",T,T,Tstep=1,initialX=50,initialY=70)
@@ -5725,17 +5122,16 @@ multiplotxy(division.t=9,type="density")
 savePlot("simulate(100,RW,T,T,Tstep=1,initialX=50,initialY=70)multiplotxy_density.tiff","tiff")
 }
 
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆ #ver5.2における追加
-###☆☆☆☆☆☆☆☆                            ☆☆☆☆
-co$oooooo<-'\n☆☆☆☆     バッチ処理      ☆☆☆☆
-'##☆☆☆☆☆☆☆☆                            ☆☆☆
-###☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-#（5.1での追加）
+#######################################################
+###################                            ########
+co$oooooo<-'\n########     Batch execution      ########
+'##################                            ######
+#######################################################
 
-#関数routine.kunitomo
+#Function routine.kunitomo
 co$routine.kunitomo<-'
 routine.kunitomo()
-以下を一括で実行。
+Batch execute following
 setdir("./data/")
 read.files(type="multi")
 adjust.position(type="kunitomo")
